@@ -1,17 +1,6 @@
 package gui;
 
-/**
- * Aquesta classe es el menu i el primer que es veu del joc; es el primer que veu l'usuari, posem una musica de fons
- * de la tematica del nostre joc.
- *
- * Hem posat 3 botons: el de Jugar, despres de donar-li et preguntara l'idioma, el nom d'usuari i tambe el nivell.
- *
- * Una finestra emergent explica les regles del joc per informar a l'usuari amb abans de comencar.
- *
- * Quan l'usuari clica a jugar, tanquem el menu i obrim la finestra de joc.
- *
- * Tambe tenim el boto de sortir, que si li dones es tancara el programa.
- */
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,13 +8,24 @@ import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
 
-// Aquesta classe es la que fabrica la pantalla principal que veus en obrir el joc
+/**
+ * Aquesta classe es el menú i el primer que es veu del joc; és el primer que veu l'usuari, posem una música de fons
+ * de la temàtica del nostre joc.
+ * Hem posat 3 botons: el de Jugar, després de donar-li et preguntara l'idioma, el nom d'usuari i també el nivell.
+ * Una finestra emergent explica les regles del joc per informar a l'usuari amb abans de començar.
+ * Quan l'usuari clica a jugar, tanquem el menu i obrim la finestra de joc.
+ * També tenim el boto de sortir, que si li dones es tancara el programa.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
+ */
 public class MenuInici extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
     private Clip musicaMenu; // El reproductor per a la musica de fons del menu
 
+    /**
+     * Contr
+     */
     public MenuInici() {
         inicialitzarComponents(); // Cridem a la funcio que munta tots els botons i textos
         this.setTitle("Pokemon Frontier - Main Menu"); // El titol que surt a dalt de la finestra
@@ -79,7 +79,7 @@ public class MenuInici extends JFrame {
         this.setContentPane(panellPrincipal); // Posem el panell a la finestra
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // Si tanquem la X, s'acaba tot
         this.pack(); // Ajustem la finestra al contingut
-        this.setSize(400, 600); // Forcem una mida de 400x500
+        this.setSize(450, 500); // Forcem una mida de 400x500
     }
 
     // Funcio per deixar els botons ben polits i iguals

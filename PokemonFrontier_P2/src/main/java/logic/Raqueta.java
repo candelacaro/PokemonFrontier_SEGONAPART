@@ -7,7 +7,7 @@ import java.awt.Rectangle;
  */
 public class Raqueta {
 
-    private static final int AMPLADA_FINESTRA = 400;
+    private static final int AMPLADA_FINESTRA = 500;
 
     private int x; // On esta la raqueta horitzontalment
     private final int y; // On esta la raqueta verticalment

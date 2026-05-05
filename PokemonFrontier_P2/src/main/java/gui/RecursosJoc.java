@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 
 /**
  * Aquesta classe carrega tots els fitxers de so i imatges del joc.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class RecursosJoc {
 
@@ -32,9 +33,11 @@ public class RecursosJoc {
     private ImageIcon imgObstacle3; // Sera Gengar
     private ImageIcon imgObstacle4; // Sera Megagengar
 
-    // Carreguem tots els fitxers de so i imatges
+    /**
+     * Mètode que carrega tots els fitxers de so i imatges
+     */
     public void carregarRecursos() {
-        try { // Intentem carregar tout per si algun fitxer falta
+        try { // Intentem carregar tot per si algun fitxer falta
             // Carreguem les imatges
             imgFons = carregarImatge("/fondopoke.png"); // Carrega el gimnas inicial
             imgFons2 = carregarImatge("/gimnasio2.png"); // Carrega el gimnas 2
@@ -57,24 +60,41 @@ public class RecursosJoc {
         }
     }
 
+    /**
+     * Mètode que carrega les imatges
+     * @param ruta, la ruta de la imatge
+     * @return la imatge
+     */
     private ImageIcon carregarImatge(final String ruta) {
         final URL url = getClass().getResource(ruta);
-        if (url == null) return null;
+        if (url == null) {
+        	return null;
+        }
         return new ImageIcon(url);
     }
 
+    /**
+     * Mètode que càrrega els audios
+     * @param ruta, la ruta del so
+     * @return la reproducció del so
+     * @throws Exception
+     */
     private Clip carregarClip(final String ruta) throws Exception {
         final URL url = getClass().getResource(ruta);
-        if (url == null) return null;
+        if (url == null) {
+        	return null;
+        }
         final Clip clip = AudioSystem.getClip();
         clip.open(AudioSystem.getAudioInputStream(url));
         return clip;
     }
 
-    //Posem la musica de Pokemon en bucle
+    /**
+     * Mètode que posa la música de Pokemon en bucle
+     */
     public void reproduirMusica() {
         try { // Intentem reproduir-la
-            final URL url = getClass().getResource("/jocActiu.wav"); // Agafem la canco de la partida
+            final URL url = getClass().getResource("/jocActiu.wav"); // Agafem la canço de la partida
             if (url != null) { // Si el fitxer hi es
                 final AudioInputStream ais = AudioSystem.getAudioInputStream(url); // Creem el flux d'entrada
                 musica = AudioSystem.getClip(); // Agafem el clip
@@ -85,31 +105,45 @@ public class RecursosJoc {
         } catch (final Exception e) { } // Si falla la musica, el joc segueix en silenci
     }
 
-    // Metode per reproduir el so d'inici de partida
+    /**
+     * Mètode per reproduir el so d'inici de partida
+     */
     public void reproduirIniciPartida() {
         reproduirClip(soIniciPartida);
     }
 
-    // Fa el soroll quan la pilota rebota a la paret
+    /**
+     * Mètode que fa el soroll quan la pilota rebota a la paret
+     */
     public void sonarRebot() {
         reproduirClip(soRebot);
     }
 
-    // Fa el soroll quan la pilota toca la teva raqueta
+    /**
+     * Mètode que fa el soroll quan la pilota toca la teva raqueta
+     */
     public void sonarRaqueta() {
         reproduirClip(soRaqueta);
     }
 
-    // Fa el soroll quan perds la partida
+    /**
+     * Mètode que fa el soroll quan perds la partida
+     */
     public void sonarMort() {
         reproduirClip(soPerdre);
     }
 
-    // Fa el soroll quan cliques al menu
+    /**
+     * Mètode que fa el soroll quan cliques al menu
+     */
     public void reproduirClic() {
         reproduirClip(soMenu);
     }
 
+    /**
+     * Mètode que reprodueix els audios
+     * @param clip, l'audio del argument
+     */
     private void reproduirClip(final Clip clip) {
         if (clip != null) {
             clip.setFramePosition(0);
@@ -117,10 +151,18 @@ public class RecursosJoc {
         }
     }
 
+    /**
+     * Mètode que atura la música
+     */
     public void pararMusica() {
         if (musica != null) musica.stop(); // Parem la musica de fons
     }
 
+    /**
+     * Mètode que carrega els fons per cada nivell
+     * @param nivell, el nivell que s'estigui jugant
+     * @return, returna el fons que correspon al nivell
+     */
     public ImageIcon getFonsActual(final int nivell) {
         if (nivell <= 4) return imgFons; // Posem el fons del gimnas 1
         if (nivell <= 9) return imgFons2; // Posem el fons del gimnas 2
@@ -128,17 +170,36 @@ public class RecursosJoc {
         return imgFons4; // Posem el fons final
     }
 
+    /**
+     * Mètode que carrega els diferents osbtacles
+     * @param nivell, el nivell que s'estigui jugant
+     * @return l'obstacle que correspongui al nivell
+     */
     public ImageIcon getObstacleActual(final int nivell) {
-        if (nivell <= 4) return imgObstacle; // gastly.png
-        if (nivell <= 9) return imgObstacle2; // hunter.png
-        if (nivell <= 19) return imgObstacle3; // pokemonobstaculo.png
+        if (nivell <= 4) {
+        	return imgObstacle; // gastly.png
+        }
+        if (nivell <= 9) {
+        	return imgObstacle2; // hunter.png
+        }
+        if (nivell <= 19) {
+        	return imgObstacle3; // pokemonobstaculo.png
+        }
         return imgObstacle4; // megagengarshiny.png
     }
 
+    /**
+     * Mètode getter que accedeix a la imatge de la pilota
+     * @return la imatge de la pilota
+     */
     public ImageIcon getImgPilota() {
         return imgPilota;
     }
 
+    /**
+     * Mètode getter que accedeic a la imatge de la raqueta
+     * @return la imatge de la raqueta
+     */
     public ImageIcon getImgRaqueta() {
         return imgRaqueta;
     }

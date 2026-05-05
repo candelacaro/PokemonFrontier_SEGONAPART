@@ -10,14 +10,12 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
-
 import logic.Bola;
 import logic.GestorObstacles;
 import logic.Raqueta;
@@ -110,7 +108,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		}
 
 		// Ajustem la finestra
-		this.setSize(400, 600); // Mida de la finestra
+		this.setSize(500, 600); // Mida de la finestra
 		this.setResizable(false); // No deixem que s'estiri la pantalla
 		this.setLocationRelativeTo(null); // Que surti al mig de la pantalla
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Si tanquem la X, s'atura tot
@@ -127,23 +125,23 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 			@Override
 			public void keyPressed(final KeyEvent e) { // Quan es prem una tecla.
 				int codi = e.getKeyCode();
-				if (codi == KeyEvent.VK_P) { // Si la tecla es la P
+				if (codi == KeyEvent.VK_Q) { // Si la tecla es la Q
 					setEstaPausat(!getEstaPausat()); // Canviem de pausa a joc o viceversa
 				}
 
 				// Movem la raqueta superior amb A i D, i la inferior amb les fletxes
 				if (!getEstaPausat()) {
 					if (codi == KeyEvent.VK_A) {
-						setRaquetaSuperiorX(getRaquetaSuperiorX() - 25); // Movem 25 pixels a l'esquerra
+						setRaquetaSuperiorX(getRaquetaSuperiorX() - 45); // Movem 45 pixels a l'esquerra
 					}
 					if (codi == KeyEvent.VK_D) {
-						setRaquetaSuperiorX(getRaquetaSuperiorX() + 25); // Movem 25 pixels a la dreta
+						setRaquetaSuperiorX(getRaquetaSuperiorX() + 45); // Movem 45 pixels a la dreta
 					}
 					if (codi == KeyEvent.VK_LEFT) {
-						setRaquetaX(getRaquetaX() - 25); // Movem 25 pixels a l'esquerra
+						setRaquetaX(getRaquetaX() - 45); // Movem 45 pixels a l'esquerra
 					}
 					if (codi == KeyEvent.VK_RIGHT) {
-						setRaquetaX(getRaquetaX() + 25); // Movem 25 pixels a la dreta
+						setRaquetaX(getRaquetaX() + 45); // Movem 45 pixels a la dreta
 					}
 				}
 			}
@@ -331,7 +329,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		// Dibuixem el fons de Pokemon segons el nivell
 		ImageIcon fonsActual = recursos.getFonsActual(getNivell()); // Variable per saber quina foto de fons toca
 		if (fonsActual != null)
-			g2d.drawImage(fonsActual.getImage(), 0, 0, 400, 600, null); // Pintem el fons triat
+			g2d.drawImage(fonsActual.getImage(), 0, 0, 500, 600, null); // Pintem el fons triat
 	}
 
 	private void dibuixarObstacles(final Graphics2D g2d) {
@@ -389,7 +387,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 
 		g2d.drawString(etiquetaJugador + getNomJugador(), 20, 50); // Escribim el nom del jugador
 		g2d.drawString(etiquetaPunts + getPunts(), 20, 70); // Escribim els milisegons de puntuacio
-		g2d.drawString(etiquetaNivell + getNivell(), 300, 50); // Escribim el nivell a la dreta
+		g2d.drawString(etiquetaNivell + getNivell(), 430, 50); // Escribim el nivell a la dreta
 		g2d.drawString("J1: A/D", 20, 90); // Controls del jugador de dalt
 		g2d.drawString("J2: <- / ->", 20, 110); // Controls del jugador de baix
 	}
@@ -399,7 +397,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		if (getEstaPausat()) {
 			// Dibuixem un rectangle negre semitransparent que ocupa tota la finestra
 			g2d.setColor(new Color(0, 0, 0, 150)); // El 150 es el nivell de transparencia
-			g2d.fillRect(0, 0, 400, 600);
+			g2d.fillRect(0, 0, 500, 600);
 
 			// Posem el text de pausa ben gran al centre
 			g2d.setColor(Color.WHITE);
