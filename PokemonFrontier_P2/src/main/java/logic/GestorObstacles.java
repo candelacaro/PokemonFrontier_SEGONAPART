@@ -9,6 +9,11 @@ import java.util.Random;
 public class GestorObstacles {
 
     private static final int TOTAL_OBSTACLES = 12;
+    private static final int AMPLADA_PANTALLA = 400; // Amplada total de la pantalla
+    private static final int ALTURA_PANTALLA = 600; // Altura total de la pantalla
+    private static final int MIDA_OBSTACLE = 40; // Amplada i altura de cada obstacle
+    private static final int INICI_ZONA_OBSTACLES = ALTURA_PANTALLA / 3; // Comenca el segon tros de la pantalla
+    private static final int ALTURA_ZONA_OBSTACLES = ALTURA_PANTALLA / 3; // El segon tros es la zona dels obstacles
 
     private final Rectangle[] llistaObstacles; // Una llista per guardar 12 rectangles invisibles
     private final boolean[] visible; // Per saber si l'obstacle encara hi és o l'hem trencat
@@ -19,12 +24,12 @@ public class GestorObstacles {
         this.visible = new boolean[TOTAL_OBSTACLES]; // Preparem 12 interruptors
     }
 
-    // Crea 12 obstacles en llocs aleatoris de la pantalla
+    // Crea 12 obstacles en llocs aleatoris de la zona mitjana de la pantalla
     public void generarObstacles() {
         for (int i = 0; i < TOTAL_OBSTACLES; i++) { // Fem un bucle de 1 a 12
-            final int x = aleatori.nextInt(300) + 20; // Tria una X a l'atzar
-            final int y = aleatori.nextInt(200) + 50; // Tria una Y a l'atzar a la part superior.
-            llistaObstacles[i] = new Rectangle(x, y, 40, 40); // Crea el quadrat de l'obstacle
+            final int x = aleatori.nextInt(AMPLADA_PANTALLA - MIDA_OBSTACLE); // Tria una X a l'atzar
+            final int y = aleatori.nextInt(ALTURA_ZONA_OBSTACLES - MIDA_OBSTACLE) + INICI_ZONA_OBSTACLES; // Zona mitjana
+            llistaObstacles[i] = new Rectangle(x, y, MIDA_OBSTACLE, MIDA_OBSTACLE); // Crea el quadrat de l'obstacle
             visible[i] = true; // El fem visible al principi
         }
     }
