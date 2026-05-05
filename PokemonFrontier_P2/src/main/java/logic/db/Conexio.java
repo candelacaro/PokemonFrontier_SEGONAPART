@@ -9,11 +9,11 @@ import java.sql.DriverManager;
 public class Conexio {
     
     // Aquí posem l'adreça la base de dades, el servidor local, port 3306 i el nom de la DB.
-    private static String url = "jdbc:mysql://localhost:3306/retro_tenis?useTimezone=true&serverTimezone=UTC";
+    private static String url = "jdbc:mysql://localhost:3306/retro_tennis_part2";
     // El nom d'usuari per defecte de MySQL
     private static String user = "root";
     // La teva contrasenya secreta per poder connectar-te
-    private static String password = "Polsuper92"; 
+    private static String password = "7022"; 
 
     // Getter per saber quina URL estem fent servir actualment
     public static String getUrl() {
