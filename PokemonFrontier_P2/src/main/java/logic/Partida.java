@@ -26,11 +26,11 @@ public class Partida {
      * @param idioma L'idioma seleccionat
      * @param nivell El nivell inicial
      */
-    public Partida(String nom1, String nick1, String nom2, String nick2, String idioma, int nivell) {
-        this.nomJugador1 = nom1; 
-        this.nickName1 = nick1;
-        this.nomJugador2 = nom2; 
-        this.nickName2 = nick2;
+    public Partida(String nomJugador1, String nickName1, String nomJugador2, String nickName2, String idioma, int nivell) {
+        this.nomJugador1 = nomJugador1; 
+        this.nickName1 = nickName1;
+        this.nomJugador2 = nomJugador2; 
+        this.nickName2 = nickName2;
         this.idioma = idioma; 
         this.nivell = nivell;   
     }
@@ -74,6 +74,9 @@ public class Partida {
 	}
 
 
+	public int getNivell() {
+		return nivell;
+	}
     
     
 }

@@ -1,12 +1,12 @@
 package gui;
 
-
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
+import logic.Partida;
+import logic.db.HibernateUtil;
 
 /**
  * Aquesta classe es el menú i el primer que es veu del joc; és el primer que veu l'usuari, posem una música de fons
@@ -22,6 +22,9 @@ public class MenuInici extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private Clip musicaMenu; // El reproductor per a la musica de fons del menu
+    
+    // Afegim la instància d'Hibernate per passar-la a la finestra de joc
+    private final HibernateUtil hibernate = new HibernateUtil();
 
     /**
      * Contr
@@ -108,9 +111,18 @@ public class MenuInici extends JFrame {
         // Guardem l'idioma seleccionat per passar-lo a la VentanaJuego
         String idiomaTriat = idiomes[idSeleccionat];
 
-        // Demanem el nom segons l'idioma que hagi triat
-        String nom = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom d'usuari:" : "Nombre de usuario:"));
-        if (nom == null || nom.trim().isEmpty()) return; // Si no posa nom, cancel.lem
+        // Demanem dades Jugador 1
+        String nom1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 1:" : "Nombre Jugador 1:"));
+        if (nom1 == null || nom1.trim().isEmpty()) return;
+        String nick1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 1:" : "Nickname Jugador 1:"));
+        if (nick1 == null || nick1.trim().isEmpty()) return;
+
+        // Demanem dades Jugador 2
+        String nom2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 2:" : "Nombre Jugador 2:"));
+        if (nom2 == null || nom2.trim().isEmpty()) return;
+        String nick2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 2:" : "Nickname Jugador 2:"));
+        if (nick2 == null || nick2.trim().isEmpty()) return;
+
         reproduirSo("/menuClick.wav");
 
         // Parem la musica del menu per a que no s'ajunti amb la del joc
@@ -118,8 +130,11 @@ public class MenuInici extends JFrame {
             musicaMenu.stop();
         }
 
-        // Ara li passem els 3 arguments que demana el constructor
-        VentanaJoc joc = new VentanaJoc(1, nom, idiomaTriat);
+        // Creem l'objecte Partida amb els 6 paràmetres segons el teu nou constructor
+        Partida novaPartida = new Partida(nom1, nick1, nom2, nick2, idiomaTriat, 1);
+
+        // Ara passem l'objecte Partida i la instància d'hibernate al constructor de VentanaJoc
+        VentanaJoc joc = new VentanaJoc(novaPartida, hibernate);
         joc.setVisible(true); // Fem que aparegui la pantalla de joc
         joc.iniciarJoc(); // Engeguem el joc
         this.dispose(); // Tanquem aquest menu principal
