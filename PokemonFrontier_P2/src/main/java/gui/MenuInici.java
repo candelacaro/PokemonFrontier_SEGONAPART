@@ -5,6 +5,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
+
+import logic.ConfigManager;
 import logic.Partida;
 import logic.db.HibernateUtil;
 
@@ -17,12 +19,13 @@ import logic.db.HibernateUtil;
  * També tenim el boto de sortir, que si li dones es tancara el programa.
  * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
+
 public class MenuInici extends JFrame {
 
     private static final long serialVersionUID = 1L;
-
-    private Clip musicaMenu; // El reproductor per a la musica de fons del menu
     
+    private Clip musicaMenu; // El reproductor per a la musica de fons del menu
+    private final ConfigManager config = new ConfigManager();
     // Afegim la instància d'Hibernate per passar-la a la finestra de joc
     private final HibernateUtil hibernate = new HibernateUtil();
 
@@ -30,13 +33,16 @@ public class MenuInici extends JFrame {
      * Contr
      */
     public MenuInici() {
-        inicialitzarComponents(); // Cridem a la funcio que munta tots els botons i textos
-        this.setTitle("Pokemon Frontier - Main Menu"); // El titol que surt a dalt de la finestra
-        this.setResizable(false); // No deixem que l'usuari estiri la pantalla
-        this.setLocationRelativeTo(null); // Fem que el menu surti clavat al mig de la pantalla
-        reproduirMusicaMenu("/Sound/introJoc.wav"); // Engeguem la musica de la introduccio
-    }
+    	  inicialitzarComponents();
 
+    	    System.out.println("Idioma inicial: " + config.getIdioma());
+    	    System.out.println("Volumen inicial: " + config.getVolumen());
+
+    	    this.setTitle("Pokemon Frontier - Main Menu");
+    	    this.setResizable(false);
+    	    this.setLocationRelativeTo(null);
+    	    reproduirMusicaMenu("/Sound/introJoc.wav");
+    	}
     // Aqui configurem tot el disseny visual del menu
     private void inicialitzarComponents() {
         JPanel panellPrincipal = new JPanel(); // El contenidor on anira tot
