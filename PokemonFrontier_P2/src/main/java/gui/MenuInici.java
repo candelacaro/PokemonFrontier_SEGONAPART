@@ -34,7 +34,7 @@ public class MenuInici extends JFrame {
         this.setTitle("Pokemon Frontier - Main Menu"); // El titol que surt a dalt de la finestra
         this.setResizable(false); // No deixem que l'usuari estiri la pantalla
         this.setLocationRelativeTo(null); // Fem que el menu surti clavat al mig de la pantalla
-        reproduirMusicaMenu("/introJoc.wav"); // Engeguem la musica de la introduccio
+        reproduirMusicaMenu("/Sound/introJoc.wav"); // Engeguem la musica de la introduccio
     }
 
     // Aqui configurem tot el disseny visual del menu
@@ -57,13 +57,13 @@ public class MenuInici extends JFrame {
 
         // Programem que passa quan cliquem a JUGAR
         btnJugar.addActionListener(e -> {
-            reproduirSo("/menuClick.wav"); // Fem el soroll de clic
+            reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
             accioBotoJugar(); // Anem a la funcio per triar idioma i nom
         });
 
         // Programem que passa quan cliquem a REGLAS
         btnRegles.addActionListener(e -> {
-            reproduirSo("/menuClick.wav"); // So de clic
+            reproduirSo("/Sound/menuClick.wav"); // So de clic
             mostrarRegles(); // Ensenyem la finestra amb les instruccions
         });
 
@@ -106,7 +106,7 @@ public class MenuInici extends JFrame {
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, idiomes, idiomes);
 
         if (idSeleccionat == -1) return; // Si l'usuari tanca la finestra, no fem res
-        reproduirSo("/menuClick.wav");
+        reproduirSo("/Sound/menuClick.wav");
 
         // Guardem l'idioma seleccionat per passar-lo a la VentanaJuego
         String idiomaTriat = idiomes[idSeleccionat];
@@ -123,7 +123,7 @@ public class MenuInici extends JFrame {
         String nick2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 2:" : "Nickname Jugador 2:"));
         if (nick2 == null || nick2.trim().isEmpty()) return;
 
-        reproduirSo("/menuClick.wav");
+        reproduirSo("/Sound/menuClick.wav");
 
         // Parem la musica del menu per a que no s'ajunti amb la del joc
         if (musicaMenu != null && musicaMenu.isRunning()) {
