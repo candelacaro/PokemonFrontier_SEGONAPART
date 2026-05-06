@@ -39,22 +39,22 @@ public class RecursosJoc {
     public void carregarRecursos() {
         try { // Intentem carregar tot per si algun fitxer falta
             // Carreguem les imatges
-            imgFons = carregarImatge("/fondopoke.png"); // Carrega el gimnas inicial
-            imgFons2 = carregarImatge("/gimnasio2.png"); // Carrega el gimnas 2
-            imgFons3 = carregarImatge("/gimnasio3.png"); // Carrega el gimnas 3
-            imgFons4 = carregarImatge("/gimnasio4.png"); // Carrega el gimnas 4
-            imgPilota = carregarImatge("/pokemonverda.png"); // Carrega la pokeball
-            imgRaqueta = carregarImatge("/ca\u00f1araqueta.png"); // Carrega la canya
-            imgObstacle = carregarImatge("/gastly.png"); // Imatge dels primers obstacles
-            imgObstacle2 = carregarImatge("/hunter.png"); // Imatge per els segons obstacles
-            imgObstacle3 = carregarImatge("/pokemonobstaculo.png"); // Imatge per els tercers obstacles
-            imgObstacle4 = carregarImatge("/megagengarshiny.png"); // Imatge per els ultims obstacles.
+            imgFons = carregarImatge("/Images/fondopoke.png"); // Carrega el gimnas inicial
+            imgFons2 = carregarImatge("/Images/gimnasio2.png"); // Carrega el gimnas 2
+            imgFons3 = carregarImatge("/Images/gimnasio3.png"); // Carrega el gimnas 3
+            imgFons4 = carregarImatge("/Images/gimnasio4.png"); // Carrega el gimnas 4
+            imgPilota = carregarImatge("/Images/pokemonverda.png"); // Carrega la pokeball
+            imgRaqueta = carregarImatge("/Images/ca\u00f1araqueta.png"); // Carrega la canya
+            imgObstacle = carregarImatge("/Images/gastly.png"); // Imatge dels primers obstacles
+            imgObstacle2 = carregarImatge("/Images/hunter.png"); // Imatge per els segons obstacles
+            imgObstacle3 = carregarImatge("/Images/pokemonobstaculo.png"); // Imatge per els tercers obstacles
+            imgObstacle4 = carregarImatge("/Images/megagengarshiny.png"); // Imatge per els ultims obstacles.
 
-            soRebot = carregarClip("/rebotBola.wav"); // Busca el fitxer del rebot de la pilota.
-            soRaqueta = carregarClip("/sonidoraqueta.wav"); // Busca el fitxer del toc de la raqueta (canya)
-            soPerdre = carregarClip("/partidaPerduda.wav"); // Busca el so de quan perdis.
-            soIniciPartida = carregarClip("/iniciPartida.wav"); // Busca l'audio de comencament de la partida.
-            soMenu = carregarClip("/menuClick.wav"); // Busca el so del menu
+            soRebot = carregarClip("/Sound/rebotBola.wav"); // Busca el fitxer del rebot de la pilota.
+            soRaqueta = carregarClip("/Sound/sonidoraqueta.wav"); // Busca el fitxer del toc de la raqueta (canya)
+            soPerdre = carregarClip("/Sound/partidaPerduda.wav"); // Busca el so de quan perdis.
+            soIniciPartida = carregarClip("/Sound/iniciPartida.wav"); // Busca l'audio de comencament de la partida.
+            soMenu = carregarClip("/Sound/menuClick.wav"); // Busca el so del menu
         } catch (Exception e) { // Si hi ha un error carregant
             System.out.println("Error carregant recursos: " + e.getMessage()); // Ens avisa per consola
         }
@@ -94,7 +94,7 @@ public class RecursosJoc {
      */
     public void reproduirMusica() {
         try { // Intentem reproduir-la
-            final URL url = getClass().getResource("/jocActiu.wav"); // Agafem la canço de la partida
+            final URL url = getClass().getResource("/Sound/jocActiu.wav"); // Agafem la canço de la partida
             if (url != null) { // Si el fitxer hi es
                 final AudioInputStream ais = AudioSystem.getAudioInputStream(url); // Creem el flux d'entrada
                 musica = AudioSystem.getClip(); // Agafem el clip
