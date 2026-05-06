@@ -1,68 +1,76 @@
 package logic.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import logic.db.classes.Puntuaciones;
+import logic.db.classes.Usuarios;
+
 /*
- * Clase on guardem les dades dels nostres usuaris. Guardem el nom , el seu ID, la puntuació, l'idioma i la data.
+ * Clase on guardem les dades dels nostres usuaris. Guardem el nom , el seu ID, la puntuacio, l'idioma i la data.
  */
 public class PuntuacionsRepository {
 
-    // Fem el mètode per guardar la puntuació d'una partida
-    public void guardarPuntuacion(String nomJugador, long punts) {
-        try {
-            Connection cn = Conexio.connectar();
-            if (cn != null) {
-                // 1. Inserim l'usuari si no existeix
-                String queryUsuario = "INSERT IGNORE INTO usuarios (nombre) VALUES (?)";
-                PreparedStatement pst1 = cn.prepareStatement(queryUsuario);
-                pst1.setString(1, nomJugador);
-                pst1.executeUpdate();
+    private final HibernateUtil hibernate;
 
-                // 2. Busquem l'ID de l'usuari
-                String queryId = "SELECT id_usuario FROM usuarios WHERE nombre = ?";
-                PreparedStatement pst2 = cn.prepareStatement(queryId);
-                pst2.setString(1, nomJugador);
-                ResultSet rs = pst2.executeQuery();
+    // El repositori necessita que li passis un HibernateUtil per funcionar
+    public PuntuacionsRepository(HibernateUtil hibernate) {
+        this.hibernate = hibernate;
+    }
 
-                if (rs.next()) {
-                    int idUsuari = rs.getInt("id_usuario");
-                    // 3. Guardem la puntuació
-                    String sql = "INSERT INTO puntuaciones (id_usuario, puntuacion, fecha, idioma) VALUES (?, ?, ?, ?)";
-                    PreparedStatement pst3 = cn.prepareStatement(sql);
-                    pst3.setInt(1, idUsuari);
-                    pst3.setLong(2, punts);
-                    pst3.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-                    pst3.setString(4, "Castellano");
-                    pst3.executeUpdate();
-                }
-                cn.close();
+    public void guardarPuntuacion(String nicknameJugador, long punts) {
+        Transaction tx = null;
+        // Ara fem servir la instància 'hibernate' que hem rebut al constructor
+        try (Session session = hibernate.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+
+            Usuarios usuari = buscarUsuari(session, nicknameJugador);
+            if (usuari == null) {
+                usuari = new Usuarios();
+                usuari.setNombre(nicknameJugador);
+                session.save(usuari);
             }
+
+            Puntuaciones puntuacio = new Puntuaciones();
+            puntuacio.setUsuarios(usuari);
+            puntuacio.setPuntuacion(punts);
+            puntuacio.setFecha(new Timestamp(System.currentTimeMillis()));
+            puntuacio.setIdioma("Castellano");
+            session.save(puntuacio);
+
+            tx.commit();
         } catch (Exception e) {
+            if (tx != null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    private Usuarios buscarUsuari(Session session, String nicknameJugador) {
+        return session.createQuery("FROM Usuarios WHERE nombre = :nombre", Usuarios.class)
+                .setParameter("nombre", nicknameJugador)
+                .uniqueResult();
     }
 
     // Agafa les 10 millors puntuacions de la base de dades
     public List<Puntuacio> obtenirTop10() {
         List<Puntuacio> puntuacions = new ArrayList<>();
-        try { // Connectem amb la base de dades SQL
-            final Connection connexio = Conexio.connectar(); // Obrim la connexió
-            if (connexio != null) { // Si la connexió funciona
-                final String sql = "SELECT u.nombre, p.puntuacion FROM puntuaciones p JOIN usuarios u ON p.id_usuario = u.id_usuario ORDER BY p.puntuacion DESC LIMIT 10"; // Consulta SQL
-                final PreparedStatement pst = connexio.prepareStatement(sql); // Preparem la frase per a la DB
-                final ResultSet rs = pst.executeQuery(); // Executem i guardem el resultat
+        // CORRECCIÓ: Ara fem servir la instància 'hibernate' en lloc de la crida estàtica
+        try (Session session = hibernate.getSessionFactory().openSession()) {
+            List<Puntuaciones> resultats = session
+                    .createQuery("FROM Puntuaciones ORDER BY puntuacion DESC", Puntuaciones.class)
+                    .setMaxResults(10)
+                    .list();
 
-                while (rs.next()) { // Mentre hi hagi files de resultat
-                    puntuacions.add(new Puntuacio(rs.getString("nombre"), rs.getLong("puntuacion"))); // Afegim línia a la taula
-                }
-                connexio.close(); // Tanquem la connexió amb la base de dades
+            for (Puntuaciones puntuacio : resultats) {
+                puntuacions.add(new Puntuacio(puntuacio.getUsuarios().getNombre(), puntuacio.getPuntuacion()));
             }
-        } catch (final Exception e) { } // Si la DB falla, simplement no ensenya la taula
+        } catch (final Exception e) {
+            // Si la DB falla, simplement no ensenya la taula
+        } 
         return puntuacions;
     }
 }
