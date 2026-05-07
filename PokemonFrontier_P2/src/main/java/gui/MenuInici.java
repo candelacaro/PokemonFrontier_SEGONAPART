@@ -123,52 +123,75 @@ public class MenuInici extends JFrame {
         this.setSize(450, 500); // Forcem una mida de 400x500
     }
 
-    // Funcio per deixar els botons ben polits i iguals
+    // Funció per deixar els botons ben polits i iguals
     private JButton crearBotoEstilitzat(String text, Color colorFons) {
         JButton boto = new JButton(text);
-        boto.setMaximumSize(new Dimension(200, 50)); // Mida maxima del boto
+        boto.setMaximumSize(new Dimension(200, 50)); // Mida màxima del botó
         boto.setAlignmentX(Component.CENTER_ALIGNMENT); // Ho centrem horitzontalment
         boto.setFocusPainted(false); // Treiem el quadrat que surt al text quan cliques
         boto.setBackground(colorFons); // Posem el color de fons triat
         boto.setForeground(Color.WHITE); // Text blanc
         boto.setFont(new Font("Arial", Font.BOLD, 14)); // Lletra negreta
-        boto.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Fa que surti la maneta en passar el ratoli
+        boto.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Fa que surti la maneta en passar el ratolí
         boto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Marge intern
         return boto;
     }
 
-    // Aqui gestionem tota la logica abans de que la pilota comenci a moure's
+    /**
+     * Mètode que gestiona tota la logica abans de que la pilota comenci a moure's
+     */
     private void accioBotoJugar() {
         String[] idiomes = {"Català", "Castellano"}; // Opcions per a la finestra
+        //Declaració i inicialització de variable per mostrar els missatges
         int idSeleccionat = JOptionPane.showOptionDialog(this, "Selecciona idioma:", "Configuracion",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, idiomes, idiomes);
 
-        if (idSeleccionat == -1) return; // Si l'usuari tanca la finestra, no fem res
+        //Estructura condicional on si l'idSeleccionat és igual -1 es tanca la finestra
+        if (idSeleccionat == -1) {
+        		return; // Si l'usuari tanca la finestra, no fem res
+        }
+        //Crida del mètode reproduirSo amb el so que es fa cada vegada que es fa click
         reproduirSo("/Sound/menuClick.wav");
 
         // Guardem l'idioma seleccionat per passar-lo a la VentanaJuego
         String idiomaTriat = idiomes[idSeleccionat];
 
-        // Demanem dades Jugador 1
+        // Declaració i inicialització de varible que demana dades del Jugador 1
         String nom1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 1:" : "Nombre Jugador 1:"));
-        if (nom1 == null || nom1.trim().isEmpty()) return;
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        if (nom1 == null || nom1.trim().isEmpty()) {
+        		return;
+        }
+        //Declaració i inicialització de varible que demana dades del nickname 1
         String nick1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 1:" : "Nickname Jugador 1:"));
-        if (nick1 == null || nick1.trim().isEmpty()) return;
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        if (nick1 == null || nick1.trim().isEmpty()) {
+        		return;
+        }
 
-        // Demanem dades Jugador 2
+        // Declaració i inicialització de varible que demana dades del Jugador 2
         String nom2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 2:" : "Nombre Jugador 2:"));
-        if (nom2 == null || nom2.trim().isEmpty()) return;
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        if (nom2 == null || nom2.trim().isEmpty()) {
+        		return;
+        }
+        //Declaració i inicialització de varible que demana dades del nickname 2
         String nick2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 2:" : "Nickname Jugador 2:"));
-        if (nick2 == null || nick2.trim().isEmpty()) return;
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        if (nick2 == null || nick2.trim().isEmpty()) {
+        		return;
+        }
 
+        //Crida del mètode reproduirSo amb el so que es fa cada vegada que es fa click
         reproduirSo("/Sound/menuClick.wav");
 
-        // Parem la musica del menu per a que no s'ajunti amb la del joc
+        // Estructura condicional per parar la música del menu per a que no s'ajunti amb la del joc
         if (musicaMenu != null && musicaMenu.isRunning()) {
+        		//Fem ús del mètode .stop()
             musicaMenu.stop();
         }
 
-        // Creem l'objecte Partida amb els 6 paràmetres segons el teu nou constructor
+        // Creem l'objecte Partida amb els 6 paràmetres segons el constructor
         Partida novaPartida = new Partida(nom1, nick1, nom2, nick2, idiomaTriat, 1);
 
         // Ara passem l'objecte Partida i la instància d'hibernate al constructor de VentanaJoc
@@ -178,46 +201,74 @@ public class MenuInici extends JFrame {
         this.dispose(); // Tanquem aquest menu principal
     }
 
+    /**
+     * Mètode per un nou botó per continuar la partida 
+     */
     private void accioBotoContinuar() {
+    	
+    		//Declaració i inicialització de File fent referència a FITXER_PARTIDA
         File fitxer = new File(FITXER_PARTIDA);
 
+        //Estructura condicional on avalua si hi ha alguna partida guardada
         if (!fitxer.exists()) {
+        		//Mostra de missatge
             JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada");
+            //No retornem res
             return;
         }
 
+        //Declaració i inicialització de variable int, on es mostra la pregunta, i la opció si o no
         int resposta = JOptionPane.showConfirmDialog(this,
                 "¿Quieres continuar la partida guardada?",
                 "Continuar partida",
                 JOptionPane.YES_NO_OPTION);
 
+        //Estructura condicional on avalua si respon que si
         if (resposta == JOptionPane.YES_OPTION) {
+        		//Crida del mètode continuarPartidaGuardada()
             continuarPartidaGuardada();
         }
     }
 
+    /**
+     * Mètode per continuar una partida existent desada
+     */
     private void continuarPartidaGuardada() {
+    		//Estructura de control d'excepcions TRY-CATCH
         try {
+        		//Declaració i inicialització de ObjectInputStream on fa referència a un nou objecte de FITXER_PARTIDA
             ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(FITXER_PARTIDA));
+            //Declaració i inicialització d'objecte partida, on és fa un casting i llegeix l'objecte
             Partida partidaGuardada = (Partida) entrada.readObject();
+            //Tanquem l'entrada
             entrada.close();
 
+            //Estructura condicional on avalua si la música del menú continua sonant
             if (musicaMenu != null && musicaMenu.isRunning()) {
+            		//Aturem la musica del menú amb el mètode .stop()
                 musicaMenu.stop();
             }
-
+            
+            //Ara passem l'objecte Partida i la instància d'hibernate al constructor de VentanaJoc
             VentanaJoc joc = new VentanaJoc(partidaGuardada, hibernate);
+            //Forçem a que es vegi el joc
             joc.setVisible(true);
+            //Iniciem el joc
             joc.iniciarJoc();
+            //Alliberem recursos de la finestra
             this.dispose();
 
         } catch (Exception e) {
+        		//Mostrem un missatge per si ocurreix alguna excepció 
             JOptionPane.showMessageDialog(this, "No se ha podido continuar la partida guardada");
         }
     }
 
-    // Una finestra emergent que explica com es juga
+    /**
+     * Mètode que crea una finestra emergent que explica com es juga
+     */
     private void mostrarRegles() {
+    		//Mostra del text
         String textRegles = "REGLES DEL JOC \n\n"
                 + "1. Juguen dos jugadors alhora en mode cooperatiu.\n"
                 + "2. El jugador de dalt mou la raqueta amb A i D.\n"
@@ -227,42 +278,61 @@ public class MenuInici extends JFrame {
                 + "6. La velocitat augmentara un 10% en cada canvi de nivell.\n"
                 + "7. Si la pilota surt per dalt o per baix, aquesta pilota es perd.";
         UIManager.put("OptionPane.messageForeground", Color.BLACK);
-        JOptionPane.showMessageDialog(this, textRegles, "Reglas del Proyecto ABP", JOptionPane.INFORMATION_MESSAGE);
+        //Mostrem el missatge en una finestra emergent
+        JOptionPane.showMessageDialog(this, textRegles, "Regles del Projecte ABP", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
-     * Funcio per carregar la musica i que no pari de sonar
-     * @param ruta
+     * Funció per carregar la musica i que no pari de sonar
+     * @param ruta, la ruta del so
      */
     private void reproduirMusicaMenu(String ruta) {
+    		//Estructura de control d'errors
         try {
+        		//Declaració i inicialització de URL per accedir a la ruta
             URL url = getClass().getResource(ruta);
+            //EStructura condicional on avalua si la ruta no es nul·la
             if (url != null) {
+            		//Declaració i inicialització de  AudioInputStream on accedeix a la url
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+                //Precarreguem l'audio a la memòria
                 musicaMenu = AudioSystem.getClip();
+                //Amb el mètode .open() obrim ais
                 musicaMenu.open(ais);
+                //Reproduim la música infinitament
                 musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+                //Inicialitzem la musica del menú
                 musicaMenu.start();
             }
         } catch (Exception e) {
+        		//Mostra de missatge
             System.out.println("Error musica menu: " + e.getMessage());
         }
     }
+    
 
     /**
-     * Funcio per a sons curts
-     * @param ruta
+     * Funció per a sons curts
+     * @param ruta, la ruta del so
      */
     private void reproduirSo(String ruta) {
+    		//Estructura de control d'errors
         try {
+        		//Declaració i inicialització de URL per accedir a la ruta
             URL url = getClass().getResource(ruta);
+          //EStructura condicional on avalua si la ruta no es nul·la
             if (url != null) {
+            		//Declaració i inicialització de  AudioInputStream on accedeix a la url
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+                //Precarreguem l'audio a la memòria
                 Clip clip = AudioSystem.getClip();
+                //Amb el mètode .open() obrim ais
                 clip.open(ais);
+                //Inicialitzem l'audio
                 clip.start();
             }
         } catch (Exception e) {
+        		//Mostra de missatge
             System.out.println("Error sonido: " + e.getMessage());
         }
     }

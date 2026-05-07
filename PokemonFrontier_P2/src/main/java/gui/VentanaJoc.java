@@ -41,35 +41,51 @@ import logic.ConfigManager;
 public class VentanaJoc extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	
+	//Declaració i inicialització de final String del nom de FITXER_PARTIDA
 	private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
-	// Entitats del joc
+	//Instància d'objectes del joc
+	//Instància de pilota1
 	private final Bola pilota1 = new Bola(50, 50, 3, 3, true);
+	//Instància de pilota2
 	private final Bola pilota2 = new Bola(100, 50, 3.5, 3.5, false);
+	//Instància de la raqueta superior
 	private final Raqueta raquetaSuperior = new Raqueta(100, 40, 100, 20);
+	//Instància de la raqueta inferior
 	private final Raqueta raquetaInferior = new Raqueta(100, 530, 100, 20);
 
-	// Control de moviment fluid (Smooth Movement)
-	private boolean teclaA = false, teclaD = false, teclaEsquerra = false, teclaDreta = false;
+	//Declaració i inicialització de booleans per el control de moviment fluid
+	private boolean teclaA = false; 
+	private boolean teclaD = false; 
+	private boolean teclaEsquerra = false; 
+	private boolean teclaDreta = false;
+	
+	//Declaració i inicialització de finals que controlen la velocitat
 	private final double VELOCITAT_RAQUETA = 7.0; // Píxels per frame
 	private final double VELOCITAT_MAXIMA_PILOTA = 12.0;
 
-	// Estat de la partida
+	//Declaració i incialització de variables que controlen l'estat de la partida
 	private long punts = 0;
 	private final long tempsInici;
-	private int nivell = 1;
+	private int nivell = 1;//Es comença pel nivell 1
 	private int comptadorTempsNivell = 0;
 	private final Partida partida;
 	private boolean estaPausat = false;
 	private final String idioma;
 	private boolean pilota2JaActivada = false;
 
-	// Recursos i lògica externa
+	//Declaració i inicialització de variables per els recursos i lògica externa
 	private Timer temporitzadorJoc;
+	//Instància d'objecte de la classe RecursosJoc
 	private final RecursosJoc recursos = new RecursosJoc();
+	//Instància d'objecte de la classe ConfigManager
 	private ConfigManager config = new ConfigManager();
+	//Instància d'objecte de la classe GestorObstacles
 	private final GestorObstacles gestorObstacles = new GestorObstacles();
+	//Declaració d'objecte de la classe PuntuacionsRepository
 	private final PuntuacionsRepository puntuacionsRepository;
+	//Declaració d'objecte de la classe DesarPuntuacions
 	private final DesarPuntuacions desarPuntuacions;
 
 	public VentanaJoc(Partida partida, HibernateUtil hibernate) {

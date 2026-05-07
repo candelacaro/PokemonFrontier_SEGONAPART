@@ -80,12 +80,19 @@ public class RecursosJoc {
      * @throws Exception
      */
     private Clip carregarClip(final String ruta) throws Exception {
+    		//Declaració i inicialització de final URL per accedir a la ruta
         final URL url = getClass().getResource(ruta);
+        //Estructura condicional on avalua si la url és nul·la
         if (url == null) {
+        	//Retornem null
         	return null;
         }
+        
+        //Precarreguem l'audio a la memòria
         final Clip clip = AudioSystem.getClip();
+        //Obrim l'audio precarregat
         clip.open(AudioSystem.getAudioInputStream(url));
+        //Retornem l'audio
         return clip;
     }
 

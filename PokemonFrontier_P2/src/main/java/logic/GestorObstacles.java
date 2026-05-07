@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Aquesta classe crea i controla els obstacles del mapa.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class GestorObstacles {
 
