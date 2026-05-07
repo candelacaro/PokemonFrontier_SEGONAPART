@@ -9,6 +9,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -31,13 +33,14 @@ import logic.ConfigManager;
  * Classe VentanaJoc, aqui es munta tota la part visual: carreguem els dibuixos,
  * les pales i la pilota. Fem que el joc canvi de nivell cada 20 segons pujant
  * la velocitat un 10%. Posem musica de fons i efectes de so per a cada rebot
- * perque sembli un joc de veritat. Si prems la P sortira pausa, i si perds
+ * perque sembli un joc de veritat. Si prems la P o la Q sortira pausa, i si perds
  * sortira game over amb les 10 millors puntuacions.
  *
  */
 public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una finestra
 
 	private static final long serialVersionUID = 1L;
+	private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
 	private final Bola pilota1 = new Bola(50, 50, 3, 3, true); // Declarem les dades de la pilota 1.
 	private final Bola pilota2 = new Bola(100, 50, 3.5, 3.5, false); // Declarem les dades de la pilota 2.
@@ -88,6 +91,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		recursos.carregarRecursos(); // Anem a buscar els fitxers de la carpeta resources.
 
 		this.nivell = partida.getNivell(); // Guardem el nivell triat
+		this.punts = partida.getPunts(); // Recuperem els punts si venim d'una partida guardada
 
 		// Apliquem el 10% de velocitat pero respectant el limit maxim
 		for (int i = 1; i < nivell; i++) {
@@ -106,15 +110,25 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		reproduirMusica(); // Posem aixo per a que comenci la musica
 		reproduirIniciPartida(); // Fem sonar el so de inici de partida
 
-		this.tempsInici = System.currentTimeMillis(); // Mirem el rellotge
+		this.tempsInici = System.currentTimeMillis() - this.punts; // Mirem el rellotge respectant els punts guardats
 
-		// Aixo serveix perque si prems la p, A/D o les fletxes, el joc reaccioni
+		// Aixo serveix perque si prems la P, la Q, la S, Esc, A/D o les fletxes, el joc reaccioni
 		this.addKeyListener(new KeyAdapter() { // Escoltador per al teclat
 			@Override
 			public void keyPressed(final KeyEvent e) { // Quan es prem una tecla.
 				int codi = e.getKeyCode();
-				if (codi == KeyEvent.VK_P) { // Si la tecla es la P
+				
+				// Soporte para P y Q para pausar
+				if (codi == KeyEvent.VK_P || codi == KeyEvent.VK_Q) { 
 					setEstaPausat(!getEstaPausat()); // Canviem de pausa a joc o viceversa
+				}
+
+				if (getEstaPausat() && codi == KeyEvent.VK_S) { // Si esta pausat i premem la S
+					preguntarDesarPartida(); // Preguntem si vol guardar la partida
+				}
+
+				if (getEstaPausat() && codi == KeyEvent.VK_ESCAPE) { // Si esta pausat i premem Esc
+					sortirAlMenuSenseGuardar(); // Tornem al menu sense guardar puntuacio
 				}
 
 				// Movem la raqueta superior amb A i D, i la inferior amb les fletxes
@@ -134,6 +148,55 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 				}
 			}
 		});
+	}
+
+	private void preguntarDesarPartida() {
+		// Quan el joc esta pausat, preguntem si vol desar la partida.
+		String pregunta = idioma.equals("Català") ? "Vols desar la partida per continuar-la despres?"
+				: "Quieres guardar la partida para continuarla despues?";
+		String titol = idioma.equals("Català") ? "Desar partida" : "Guardar partida";
+
+		int resposta = JOptionPane.showConfirmDialog(this, pregunta, titol, JOptionPane.YES_NO_OPTION);
+
+		if (resposta == JOptionPane.YES_OPTION) {
+			guardarPartida();
+		}
+	}
+
+	private void guardarPartida() {
+		try {
+			// Guardem el nivell actual dins de l'objecte Partida abans de serialitzar-lo.
+			partida.setNivell(getNivell());
+			partida.setPunts(getPunts()); // Guardem tambe els punts actuals
+
+			ObjectOutputStream sortida = new ObjectOutputStream(new FileOutputStream(FITXER_PARTIDA));
+			sortida.writeObject(partida); // Serializable converteix l'objecte en dades de fitxer.
+			sortida.close();
+
+			if (temporitzadorJoc != null) {
+				temporitzadorJoc.stop();
+			}
+			recursos.pararMusica();
+
+			String msgExito = idioma.equals("Català") ? "Partida guardada" : "Partida guardada";
+			JOptionPane.showMessageDialog(this, msgExito);
+			new MenuInici().setVisible(true); // Tornem al menu principal.
+			this.dispose(); // Tanquem la finestra de joc actual.
+		} catch (Exception e) {
+			String msgError = idioma.equals("Català") ? "No s'ha pogut guardar la partida" : "No se ha podido guardar la partida";
+			JOptionPane.showMessageDialog(this, msgError);
+		}
+	}
+
+	private void sortirAlMenuSenseGuardar() {
+		// Sortim de la partida pausada sense desar partida ni puntuacio a la base de dades.
+		if (temporitzadorJoc != null) {
+			temporitzadorJoc.stop();
+		}
+		recursos.pararMusica();
+
+		new MenuInici().setVisible(true); // Tornem al menu principal.
+		this.dispose(); // Tanquem la finestra de joc actual.
 	}
 
 	// Posem la musica de Pokemon en bucle
@@ -361,30 +424,14 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		String colorText = config.getColorPuntuacio();
 
 		switch (colorText.toUpperCase()) {
-
-		    case "RED":
-		        g2d.setColor(Color.RED);
-		        break;
-
-		    case "BLUE":
-		        g2d.setColor(Color.BLUE);
-		        break;
-
-		    case "GREEN":
-		        g2d.setColor(Color.GREEN);
-		        break;
-
-		    case "YELLOW":
-		        g2d.setColor(Color.YELLOW);
-		        break;
-
-		    case "BLACK":
-		        g2d.setColor(Color.BLACK);
-		        break;
-
-		    default:
-		        g2d.setColor(Color.WHITE);
+		    case "RED": g2d.setColor(Color.RED); break;
+		    case "BLUE": g2d.setColor(Color.BLUE); break;
+		    case "GREEN": g2d.setColor(Color.GREEN); break;
+		    case "YELLOW": g2d.setColor(Color.YELLOW); break;
+		    case "BLACK": g2d.setColor(Color.BLACK); break;
+		    default: g2d.setColor(Color.WHITE);
 		}
+		
 		g2d.setFont(new Font("Arial", Font.BOLD, 14)); // Tipus de lletra clara
 
 		String etiquetaPunts = idioma.equals("Català") ? "Punts: " : "Puntos: ";
@@ -408,9 +455,14 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 			g2d.setFont(new Font("Impact", Font.BOLD, 50));
 			g2d.drawString("PAUSA", 130, 300);
 
-			String msgPausa = idioma.equals("Català") ? "Prem 'P' per continuar" : "Pulsa 'P' para continuar";
+			String msgPausa = idioma.equals("Català") ? "Prem 'Q' per continuar" : "Pulsa 'Q' para continuar";
+			String msgGuardar = idioma.equals("Català") ? "Prem 'S' per desar la partida" : "Pulsa 'S' para guardar la partida";
+			String msgMenu = idioma.equals("Català") ? "Prem 'Esc' per sortir al menu" : "Pulsa 'Esc' para salir al menu";
+			
 			g2d.setFont(new Font("Arial", Font.PLAIN, 15));
 			g2d.drawString(msgPausa, 125, 340);
+			g2d.drawString(msgGuardar, 125, 360);
+			g2d.drawString(msgMenu, 125, 380);
 		}
 	}
 

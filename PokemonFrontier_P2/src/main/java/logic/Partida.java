@@ -1,12 +1,17 @@
 package logic;
 
+import java.io.Serializable;
+
 /**
  * Aquesta classe serveix per guardar les dades basiques d'una partida.
  * Cada cop que algu comenca a jugar, creem un "objecte" d'aquests.
+ * Implementem Serializable per poder desar la partida en un fitxer.
  *
  * @author dam1
  */
-public class Partida {
+public class Partida implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // Declarem les dades que volem recordar de la partida
     private String nomJugador1; // El nom que ha posat el jugador 1 al menu
@@ -15,6 +20,7 @@ public class Partida {
     private String nickName2;
     private String idioma; // Si ha triat Catala o Castella
     private int nivell;     // El nivell on ha comencat o on es troba
+    private long punts; // Els punts que portava la partida quan es va guardar
 
     /**
      * El "constructor": es el que fa servir el programa per fabricar
@@ -32,7 +38,8 @@ public class Partida {
         this.nomJugador2 = nomJugador2; 
         this.nickName2 = nickName2;
         this.idioma = idioma; 
-        this.nivell = nivell;   
+        this.nivell = nivell;
+        this.punts = 0;
     }
 
     /**
@@ -76,6 +83,18 @@ public class Partida {
 
 	public int getNivell() {
 		return nivell;
+	}
+
+	public void setNivell(int nivell) {
+		this.nivell = nivell;
+	}
+
+	public long getPunts() {
+		return punts;
+	}
+
+	public void setPunts(long punts) {
+		this.punts = punts;
 	}
     
     

@@ -5,6 +5,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
+import java.io.*;
 
 import logic.ConfigManager;
 import logic.Partida;
@@ -19,11 +20,11 @@ import logic.db.HibernateUtil;
  * També tenim el boto de sortir, que si li dones es tancara el programa.
  * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
-
 public class MenuInici extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    
+    private static final String FITXER_PARTIDA = "partida_guardada.dat";
+
     private Clip musicaMenu; // El reproductor per a la musica de fons del menu
     private final ConfigManager config = new ConfigManager();
     // Afegim la instància d'Hibernate per passar-la a la finestra de joc
@@ -33,16 +34,17 @@ public class MenuInici extends JFrame {
      * Contr
      */
     public MenuInici() {
-    	  inicialitzarComponents();
+        inicialitzarComponents();
 
-    	    System.out.println("Idioma inicial: " + config.getIdioma());
-    	    System.out.println("Volumen inicial: " + config.getVolumen());
+        System.out.println("Idioma inicial: " + config.getIdioma());
+        System.out.println("Volumen inicial: " + config.getVolumen());
 
-    	    this.setTitle("Pokemon Frontier - Main Menu");
-    	    this.setResizable(false);
-    	    this.setLocationRelativeTo(null);
-    	    reproduirMusicaMenu("/Sound/introJoc.wav");
-    	}
+        this.setTitle("Pokemon Frontier - Main Menu");
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
+        reproduirMusicaMenu("/Sound/introJoc.wav");
+    }
+
     // Aqui configurem tot el disseny visual del menu
     private void inicialitzarComponents() {
         JPanel panellPrincipal = new JPanel(); // El contenidor on anira tot
@@ -58,6 +60,7 @@ public class MenuInici extends JFrame {
 
         // Creem els botons
         JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Boto verd
+        JButton btnContinuar = crearBotoEstilitzat("CONTINUAR", new Color(241, 196, 15)); // Boto groc
         JButton btnRegles = crearBotoEstilitzat("REGLAS", new Color(52, 152, 219)); // Boto blau
         JButton btnSortir = crearBotoEstilitzat("SALIR", new Color(231, 76, 60)); // Boto vermell
 
@@ -65,6 +68,12 @@ public class MenuInici extends JFrame {
         btnJugar.addActionListener(e -> {
             reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
             accioBotoJugar(); // Anem a la funcio per triar idioma i nom
+        });
+
+        // Programem que passa quan cliquem a CONTINUAR
+        btnContinuar.addActionListener(e -> {
+            reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
+            accioBotoContinuar(); // Intentem carregar la partida guardada
         });
 
         // Programem que passa quan cliquem a REGLAS
@@ -81,6 +90,8 @@ public class MenuInici extends JFrame {
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 40))); // Espai de 40 pixels sota el titol
         panellPrincipal.add(btnJugar);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15))); // Espai de 15 entre botons
+        panellPrincipal.add(btnContinuar);
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
         panellPrincipal.add(btnRegles);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
         panellPrincipal.add(btnSortir);
@@ -146,6 +157,44 @@ public class MenuInici extends JFrame {
         this.dispose(); // Tanquem aquest menu principal
     }
 
+    private void accioBotoContinuar() {
+        File fitxer = new File(FITXER_PARTIDA);
+
+        if (!fitxer.exists()) {
+            JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada");
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "¿Quieres continuar la partida guardada?",
+                "Continuar partida",
+                JOptionPane.YES_NO_OPTION);
+
+        if (resposta == JOptionPane.YES_OPTION) {
+            continuarPartidaGuardada();
+        }
+    }
+
+    private void continuarPartidaGuardada() {
+        try {
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(FITXER_PARTIDA));
+            Partida partidaGuardada = (Partida) entrada.readObject();
+            entrada.close();
+
+            if (musicaMenu != null && musicaMenu.isRunning()) {
+                musicaMenu.stop();
+            }
+
+            VentanaJoc joc = new VentanaJoc(partidaGuardada, hibernate);
+            joc.setVisible(true);
+            joc.iniciarJoc();
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No se ha podido continuar la partida guardada");
+        }
+    }
+
     // Una finestra emergent que explica com es juga
     private void mostrarRegles() {
         String textRegles = "REGLES DEL JOC \n\n"
@@ -156,7 +205,7 @@ public class MenuInici extends JFrame {
                 + "5. CADA 20 SEGONS es pujara de nivell.\n"
                 + "6. La velocitat augmentara un 10% en cada canvi de nivell.\n"
                 + "7. Si la pilota surt per dalt o per baix, aquesta pilota es perd.";
-        UIManager.put("OptionPane.messageForeground", Color.BLACK); // Text en negre per a que es llegeixi be
+        UIManager.put("OptionPane.messageForeground", Color.BLACK);
         JOptionPane.showMessageDialog(this, textRegles, "Reglas del Proyecto ABP", JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -166,13 +215,13 @@ public class MenuInici extends JFrame {
      */
     private void reproduirMusicaMenu(String ruta) {
         try {
-            URL url = getClass().getResource(ruta); // Busquem l'arxiu de so
+            URL url = getClass().getResource(ruta);
             if (url != null) {
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
                 musicaMenu = AudioSystem.getClip();
                 musicaMenu.open(ais);
-                musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); // Posem el bucle infinit
-                musicaMenu.start(); // Engeguem la musica
+                musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+                musicaMenu.start();
             }
         } catch (Exception e) {
             System.out.println("Error musica menu: " + e.getMessage());
@@ -190,7 +239,7 @@ public class MenuInici extends JFrame {
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
                 Clip clip = AudioSystem.getClip();
                 clip.open(ais);
-                clip.start(); // Sona un cop i s'acaba
+                clip.start();
             }
         } catch (Exception e) {
             System.out.println("Error sonido: " + e.getMessage());
@@ -199,7 +248,6 @@ public class MenuInici extends JFrame {
 
     // El punt d'inici de tot el programa
     public static void main(String args[]) {
-        // Cridem a la interficie visual de forma segura
         java.awt.EventQueue.invokeLater(() -> new MenuInici().setVisible(true));
     }
 }
