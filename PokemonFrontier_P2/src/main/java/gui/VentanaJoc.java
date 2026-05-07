@@ -1,5 +1,6 @@
 package gui; // La carpeta on guardem el nostre codi
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,10 +14,13 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import logic.Bola;
 import logic.GestorObstacles;
@@ -27,6 +31,7 @@ import logic.db.HibernateUtil;
 import logic.db.Puntuacio;
 import logic.db.PuntuacionsRepository;
 import logic.ConfigManager;
+
 
 /**
  * Classe VentanaJoc: Interfície gràfica i motor del joc. Implementa moviment
@@ -254,7 +259,7 @@ public class VentanaJoc extends JFrame {
 		}
 	}
 
-	// --- GRÀFICS (PAINT) ---
+	
 
 	@Override
 	public void paint(final Graphics g) {
@@ -276,22 +281,7 @@ public class VentanaJoc extends JFrame {
 	}
 
 	private void dibuixarTextos(final Graphics2D g2d) {
-		// Aplicar color des de configuració
-		String col = config.getColorPuntuacio().toUpperCase();
-		switch (col) {
-		case "RED":
-			g2d.setColor(Color.RED);
-			break;
-		case "BLUE":
-			g2d.setColor(Color.BLUE);
-			break;
-		case "GREEN":
-			g2d.setColor(Color.GREEN);
-			break;
-		default:
-			g2d.setColor(Color.WHITE);
-		}
-
+		
 		g2d.setFont(new Font("Arial", Font.BOLD, 14));
 		String labelPunts = idioma.equals("Català") ? "Punts: " : "Puntos: ";
 		g2d.drawString("J1: " + partida.getNickName1(), 20, 50);
@@ -300,7 +290,7 @@ public class VentanaJoc extends JFrame {
 		g2d.drawString("Nivell: " + getNivell(), 410, 50);
 	}
 
-	// --- MÈTODES AUXILIARS I SISTEMA ---
+	
 
 	public void iniciarJoc() {
 		requestFocusInWindow();
@@ -333,16 +323,21 @@ public class VentanaJoc extends JFrame {
 	}
 
 	private void comprovarFinalPartida() {
-		if (!pilota1.isActiva() && !pilota2.isActiva()) {
-			if (temporitzadorJoc != null)
-				temporitzadorJoc.stop();
-			recursos.pararMusica();
-			sonarMort();
 
-			desarPuntuacions.guardarPuntuacionEquip(partida, getPunts());
-			mostrarTop10();
-			pararITornarAlMenu();
-		}
+	    if (!pilota1.isActiva() && !pilota2.isActiva()) {
+
+	        if (temporitzadorJoc != null)
+	            temporitzadorJoc.stop();
+
+	        recursos.pararMusica();
+	        sonarMort();
+
+	        desarPuntuacions.guardarPuntuacionEquip(partida, getPunts());
+
+	        SwingUtilities.invokeLater(() -> {
+	            mostrarTop10();
+	        });
+	    }
 	}
 
 	private void pararITornarAlMenu() {
@@ -354,18 +349,104 @@ public class VentanaJoc extends JFrame {
 	}
 
 	private void mostrarTop10() {
-		List<Puntuacio> top = puntuacionsRepository.obtenirTop10();
-		StringBuilder sb = new StringBuilder("TOP 10\n\n");
-		int i = 1;
-		for (Puntuacio p : top) {
-			sb.append(String.format("%d. %-15s %d\n", i++, p.getNomJugador(), p.getPunts()));
-		}
-		JTextArea area = new JTextArea(sb.toString());
-		area.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		JOptionPane.showMessageDialog(this, new JScrollPane(area));
+
+	    List<Puntuacio> top = puntuacionsRepository.obtenirTop10();
+
+	    StringBuilder sb = new StringBuilder("TOP 10\n\n");
+
+	    int i = 1;
+	    for (Puntuacio p : top) {
+	        sb.append(String.format("%d. %-15s %d\n", i++, p.getNomJugador(), p.getPunts()));
+	    }
+
+	    JTextArea area = new JTextArea(sb.toString());
+	    area.setFont(new Font("Monospaced", Font.BOLD, 16));
+	    area.setEditable(false);
+	    area.setOpaque(true);
+
+	    JScrollPane scroll = new JScrollPane(area);
+
+	    JPanel panel = new JPanel();
+	    panel.setLayout(new BorderLayout());
+
+	    Color fondo = convertirColor(config.getColorPuntuacio());
+	    panel.setBackground(fondo);
+
+	    scroll.getViewport().setOpaque(true);
+	    scroll.getViewport().setBackground(fondo);
+	    scroll.setOpaque(true);
+	    scroll.setBackground(fondo);
+
+	    
+	    JButton btnColor = new JButton("Cambiar color");
+
+	    btnColor.addActionListener(e -> {
+
+	    	String[] opciones = {
+	    		    "WHITE",
+	    		    "YELLOW",
+	    		    "RED",
+	    		    "BLUE",
+	    		    "GREEN",
+	    		};	    	
+	        String seleccion = (String) JOptionPane.showInputDialog(
+	                panel,
+	                "Selecciona color:",
+	                "Configuración",
+	                JOptionPane.QUESTION_MESSAGE,
+	                null,
+	                opciones,
+	                opciones[0]
+	        );
+
+	        if (seleccion != null) {
+
+	            config.setColorPuntuacio(seleccion);
+
+	            Color nuevo = convertirColor(seleccion);
+
+	            panel.setBackground(nuevo);
+	            scroll.getViewport().setBackground(nuevo);
+	            area.setBackground(nuevo);
+
+	            area.setForeground(nuevo.equals(Color.WHITE) ? Color.BLACK : Color.BLACK);
+	        }
+	    });
+
+	    panel.add(btnColor, BorderLayout.NORTH);
+	    panel.add(scroll, BorderLayout.CENTER);
+
+	   
+	    JFrame frame = new JFrame("TOP 10");
+	    frame.setSize(400, 450);
+	    frame.setLocationRelativeTo(null);
+	    frame.setContentPane(panel);
+	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+	        @Override
+	        public void windowClosed(java.awt.event.WindowEvent e) {
+	            new MenuInici().setVisible(true);
+	        }
+	    });
+
+	    frame.setVisible(true);
 	}
 
-	// --- DIBUIX SECUNDARI ---
+	
+	private Color convertirColor(String c) {
+		if (c == null) return Color.DARK_GRAY;
+
+		switch (c.toUpperCase()) {
+			case "RED": return Color.RED;
+			case "BLUE": return Color.BLUE;
+			case "GREEN": return Color.GREEN;
+			case "YELLOW": return Color.YELLOW;
+			default: return Color.WHITE;
+		}
+	}
+
+	
 	private void dibuixarFons(Graphics2D g2d) {
 		ImageIcon f = recursos.getFonsActual(getNivell());
 		if (f != null)
