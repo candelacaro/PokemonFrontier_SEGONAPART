@@ -88,6 +88,11 @@ public class VentanaJoc extends JFrame {
 	//Declaració d'objecte de la classe DesarPuntuacions
 	private final DesarPuntuacions desarPuntuacions;
 
+	/**
+	 * Mètode
+	 * @param partida
+	 * @param hibernate
+	 */
 	public VentanaJoc(Partida partida, HibernateUtil hibernate) {
 		this.partida = partida;
 		this.idioma = "Català"; // Es podria obtenir de partida.getIdioma()
