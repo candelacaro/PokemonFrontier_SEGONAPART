@@ -22,41 +22,62 @@ import logic.db.HibernateUtil;
  */
 public class MenuInici extends JFrame {
 
+	//Declaració i inicialització de final
     private static final long serialVersionUID = 1L;
+    //Declaració i inicialització de final String, per fer-la servir per la base de dades
     private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
-    private Clip musicaMenu; // El reproductor per a la musica de fons del menu
+    //Declaració i inicialització de Clip, el reproductor per a la musica de fons del menú
+    private Clip musicaMenu; 
+    
+    //Declaració i inicialització d'atribut privat final on s'instància un objecte de la classe ConfigManager()
     private final ConfigManager config = new ConfigManager();
-    // Afegim la instància d'Hibernate per passar-la a la finestra de joc
+    //Declaració i inicialització d'atribut privat final, afegim la instància d'Hibernate per passar-la a la finestra de joc
     private final HibernateUtil hibernate = new HibernateUtil();
 
     /**
-     * Contr
+     * Constructor per defecte que mostra tot el menú sencer
      */
     public MenuInici() {
+    		
+    		//Crida del mètode inicialitzarComponents(), per mostrar l'estètica del menú
         inicialitzarComponents();
 
+        //Mostra de les properties que hi han *** (No es final no sabem si ha de ser així)
         System.out.println("Idioma inicial: " + config.getIdioma());
         System.out.println("Volumen inicial: " + config.getVolumen());
 
+        //Posem un títol al menú
         this.setTitle("Pokemon Frontier - Main Menu");
+        //Fem que no es pugui fer més gran la pantalla
         this.setResizable(false);
+        //Posicionem la finestra
         this.setLocationRelativeTo(null);
+        //Crida del mètode reproduirMusicaMenu() i pasem com a paràmetre la música de l'introducció del joc
         reproduirMusicaMenu("/Sound/introJoc.wav");
     }
 
-    // Aqui configurem tot el disseny visual del menu
+    /**
+     * Mètode que configura tot el disseny visual del menu
+     */
     private void inicialitzarComponents() {
-        JPanel panellPrincipal = new JPanel(); // El contenidor on anira tot
-        panellPrincipal.setBackground(new Color(45, 45, 45)); // Un color gris fosc de fons
-        panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); // Posem els elements un sota l'altre
-        panellPrincipal.setBorder(new EmptyBorder(50, 50, 50, 50)); // Donem una mica de marge als costats
+    		//El contenidor on anira tot
+        JPanel panellPrincipal = new JPanel(); 
+        //Un color gris fosc de fons
+        panellPrincipal.setBackground(new Color(45, 45, 45)); 
+        //Posem els elements un sota l'altre
+        panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); 
+        //Donem una mica de marge als costats
+        panellPrincipal.setBorder(new EmptyBorder(50, 50, 50, 50)); 
 
-        // El titol del joc ben gran
+        //El titol del joc ben gran
         JLabel titol = new JLabel("POKEMON FRONTIER");
-        titol.setForeground(Color.WHITE); // Lletra blanca
-        titol.setFont(new Font("Arial", Font.BOLD, 26)); // Lletra Arial, negreta i tamany 26
-        titol.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrem el text
+        //Lletra blanca
+        titol.setForeground(Color.WHITE); 
+        //Lletra Arial, negreta i tamany 26
+        titol.setFont(new Font("Arial", Font.BOLD, 26)); 
+        //Centrem el text
+        titol.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
         // Creem els botons
         JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Boto verd
