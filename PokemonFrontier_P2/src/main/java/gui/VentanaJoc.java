@@ -24,6 +24,7 @@ import logic.db.DesarPuntuacions;
 import logic.db.HibernateUtil;
 import logic.db.Puntuacio;
 import logic.db.PuntuacionsRepository;
+import logic.ConfigManager;
 
 /**
  *
@@ -61,6 +62,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 	private Timer temporitzadorJoc; // El motor que fa que les coses es moguin soles
 
 	private final RecursosJoc recursos = new RecursosJoc(); // Imatges i sons del joc
+	private final ConfigManager config = new ConfigManager();
 	private final GestorObstacles gestorObstacles = new GestorObstacles(); // Obstacles del mapa
 	
 	private final PuntuacionsRepository puntuacionsRepository; // Classe que parla amb la base de dades
@@ -356,7 +358,33 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 
 	private void dibuixarTextos(final Graphics2D g2d) {
 		// Dibuixem els textos d'informacio (Nicknames, Punts, Nivell) adaptats a l'idioma
-		g2d.setColor(Color.WHITE); // Color del text en blanc
+		String colorText = config.getColorPuntuacio();
+
+		switch (colorText.toUpperCase()) {
+
+		    case "RED":
+		        g2d.setColor(Color.RED);
+		        break;
+
+		    case "BLUE":
+		        g2d.setColor(Color.BLUE);
+		        break;
+
+		    case "GREEN":
+		        g2d.setColor(Color.GREEN);
+		        break;
+
+		    case "YELLOW":
+		        g2d.setColor(Color.YELLOW);
+		        break;
+
+		    case "BLACK":
+		        g2d.setColor(Color.BLACK);
+		        break;
+
+		    default:
+		        g2d.setColor(Color.WHITE);
+		}
 		g2d.setFont(new Font("Arial", Font.BOLD, 14)); // Tipus de lletra clara
 
 		String etiquetaPunts = idioma.equals("Català") ? "Punts: " : "Puntos: ";
