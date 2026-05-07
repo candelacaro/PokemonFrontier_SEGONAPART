@@ -1,76 +1,118 @@
 package gui;
 
-/**
- * Aquesta classe és el menú i el primer que es veu del joc; és el primer que veu l'usuari, posem una musica de fons 
- * de la tematica del nostre joc.
-    
-   Hem posat 3 botons: el de Jugar, despres de donar-li et preguntara l'idioma, el nom d'usuari i també el nivell.
-  
-   Una finestra emergent explica les regles del joc per informar a l'usuari amb abans de començar.
-   
-   Quan l'usuari clica a jugar, tanquem el menú i obrim la finestra de joc.
-   
-   També tenim el botó de sortir, que si li dones es tancara el programa.
-  
- */
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
+import java.io.*;
 
-// Aquesta classe és la que fabrica la pantalla principal que veus en obrir el joc
+import logic.ConfigManager;
+import logic.Partida;
+import logic.db.HibernateUtil;
+
+/**
+ * Aquesta classe es el menú i el primer que es veu del joc; és el primer que veu l'usuari, posem una música de fons
+ * de la temàtica del nostre joc.
+ * Hem posat 3 botons: el de Jugar, després de donar-li et preguntara l'idioma, el nom d'usuari i també el nivell.
+ * Una finestra emergent explica les regles del joc per informar a l'usuari amb abans de començar.
+ * Quan l'usuari clica a jugar, tanquem el menu i obrim la finestra de joc.
+ * També tenim el boto de sortir, que si li dones es tancara el programa.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
+ */
 public class MenuInici extends JFrame {
 
-    private Clip musicaMenu; // El reproductor per a la música de fons del menú
+	//Declaració i inicialització de final
+    private static final long serialVersionUID = 1L;
+    //Declaració i inicialització de final String, per fer-la servir per la base de dades
+    private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
+    //Declaració i inicialització de Clip, el reproductor per a la musica de fons del menú
+    private Clip musicaMenu; 
+    
+    //Declaració i inicialització d'atribut privat final on s'instància un objecte de la classe ConfigManager()
+    private final ConfigManager config = new ConfigManager();
+    //Declaració i inicialització d'atribut privat final, afegim la instància d'Hibernate per passar-la a la finestra de joc
+    private final HibernateUtil hibernate = new HibernateUtil();
+
+    /**
+     * Constructor per defecte que mostra tot el menú sencer
+     */
     public MenuInici() {
-        inicialitzarComponents(); // Cridem a la funció que munta tots els botons i textos
-        this.setTitle("Pokémon Frontier - Main Menu"); // El títol que surt a dalt de la finestra
-        this.setResizable(false); // No deixem que l'usuari estiri la pantalla
-        this.setLocationRelativeTo(null); // Fem que el menú surti clavat al mig de la pantalla
-        reproduirMusicaMenu("/introJoc.wav"); // Engeguem la música de la introducció
+    		
+    		//Crida del mètode inicialitzarComponents(), per mostrar l'estètica del menú
+        inicialitzarComponents();
+
+        //Mostra de les properties que hi han *** (No es final no sabem si ha de ser així)
+        System.out.println("Idioma inicial: " + config.getIdioma());
+        System.out.println("Volumen inicial: " + config.getVolumen());
+
+        //Posem un títol al menú
+        this.setTitle("Pokemon Frontier - Main Menu");
+        //Fem que no es pugui fer més gran la pantalla
+        this.setResizable(false);
+        //Posicionem la finestra
+        this.setLocationRelativeTo(null);
+        //Crida del mètode reproduirMusicaMenu() i pasem com a paràmetre la música de l'introducció del joc
+        reproduirMusicaMenu("/Sound/introJoc.wav");
     }
 
-    // Aquí configurem tot el disseny visual del menú
+    /**
+     * Mètode que configura tot el disseny visual del menu
+     */
     private void inicialitzarComponents() {
-        JPanel panellPrincipal = new JPanel(); // El contenidor on anirà tot
-        panellPrincipal.setBackground(new Color(45, 45, 45)); // Un color gris fosc de fons
-        panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); // Posem els elements un sota l'altre
-        panellPrincipal.setBorder(new EmptyBorder(50, 50, 50, 50)); // Donem una mica de marge als costats
+    		//El contenidor on anira tot
+        JPanel panellPrincipal = new JPanel(); 
+        //Un color gris fosc de fons
+        panellPrincipal.setBackground(new Color(45, 45, 45)); 
+        //Posem els elements un sota l'altre
+        panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); 
+        //Donem una mica de marge als costats
+        panellPrincipal.setBorder(new EmptyBorder(50, 50, 50, 50)); 
 
-        // El títol del joc ben gran
-        JLabel titol = new JLabel("POKÉMON FRONTIER");
-        titol.setForeground(Color.WHITE); // Lletra blanca
-        titol.setFont(new Font("Arial", Font.BOLD, 26)); // Lletra Arial, negreta i tamany 26
-        titol.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrem el text
+        //El titol del joc ben gran
+        JLabel titol = new JLabel("POKEMON FRONTIER");
+        //Lletra blanca
+        titol.setForeground(Color.WHITE); 
+        //Lletra Arial, negreta i tamany 26
+        titol.setFont(new Font("Arial", Font.BOLD, 26)); 
+        //Centrem el text
+        titol.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
         // Creem els botons
-        JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Botó verd
-        JButton btnRegles = crearBotoEstilitzat("REGLAS", new Color(52, 152, 219)); // Botó blau
-        JButton btnSortir = crearBotoEstilitzat("SALIR", new Color(231, 76, 60)); // Botó vermell
+        JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Boto verd
+        JButton btnContinuar = crearBotoEstilitzat("CONTINUAR", new Color(241, 196, 15)); // Boto groc
+        JButton btnRegles = crearBotoEstilitzat("REGLAS", new Color(52, 152, 219)); // Boto blau
+        JButton btnSortir = crearBotoEstilitzat("SALIR", new Color(231, 76, 60)); // Boto vermell
 
-        // Programem què passa quan cliquem a JUGAR
+        // Programem que passa quan cliquem a JUGAR
         btnJugar.addActionListener(e -> {
-            reproduirSo("/menuClick.wav"); // Fem el soroll de clic
-            accioBotoJugar(); // Anem a la funció per triar idioma i nom
+            reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
+            accioBotoJugar(); // Anem a la funcio per triar idioma i nom
         });
 
-        // Programem què passa quan cliquem a REGLAS
+        // Programem que passa quan cliquem a CONTINUAR
+        btnContinuar.addActionListener(e -> {
+            reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
+            accioBotoContinuar(); // Intentem carregar la partida guardada
+        });
+
+        // Programem que passa quan cliquem a REGLAS
         btnRegles.addActionListener(e -> {
-            reproduirSo("/menuClick.wav"); // So de clic
+            reproduirSo("/Sound/menuClick.wav"); // So de clic
             mostrarRegles(); // Ensenyem la finestra amb les instruccions
         });
 
-        // Programem el botó de sortir
+        // Programem el boto de sortir
         btnSortir.addActionListener(e -> System.exit(0)); // Tanquem el programa del tot
 
         // Anem afegint els elements al panell amb espais entremig
         panellPrincipal.add(titol);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 40))); // Espai de 40 píxels sota el títol
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 40))); // Espai de 40 pixels sota el titol
         panellPrincipal.add(btnJugar);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15))); // Espai de 15 entre botons
+        panellPrincipal.add(btnContinuar);
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
         panellPrincipal.add(btnRegles);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
         panellPrincipal.add(btnSortir);
@@ -78,87 +120,137 @@ public class MenuInici extends JFrame {
         this.setContentPane(panellPrincipal); // Posem el panell a la finestra
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // Si tanquem la X, s'acaba tot
         this.pack(); // Ajustem la finestra al contingut
-        this.setSize(400, 500); // Forcem una mida de 400x500
+        this.setSize(450, 500); // Forcem una mida de 400x500
     }
 
-    // Funció per deixar els botons ben polits i iguals
+    // Funcio per deixar els botons ben polits i iguals
     private JButton crearBotoEstilitzat(String text, Color colorFons) {
         JButton boto = new JButton(text);
-        boto.setMaximumSize(new Dimension(200, 50)); // Mida màxima del botó
+        boto.setMaximumSize(new Dimension(200, 50)); // Mida maxima del boto
         boto.setAlignmentX(Component.CENTER_ALIGNMENT); // Ho centrem horitzontalment
         boto.setFocusPainted(false); // Treiem el quadrat que surt al text quan cliques
         boto.setBackground(colorFons); // Posem el color de fons triat
         boto.setForeground(Color.WHITE); // Text blanc
         boto.setFont(new Font("Arial", Font.BOLD, 14)); // Lletra negreta
-        boto.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Fa que surti la maneta en passar el ratolí
+        boto.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Fa que surti la maneta en passar el ratoli
         boto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Marge intern
         return boto;
     }
 
-    // Aquí gestionem tota la lògica abans de que la pilota comenci a moure's
+    // Aqui gestionem tota la logica abans de que la pilota comenci a moure's
     private void accioBotoJugar() {
         String[] idiomes = {"Català", "Castellano"}; // Opcions per a la finestra
-        int idSeleccionat = JOptionPane.showOptionDialog(this, "Selecciona idioma:", "Configuración",
+        int idSeleccionat = JOptionPane.showOptionDialog(this, "Selecciona idioma:", "Configuracion",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, idiomes, idiomes);
-        
+
         if (idSeleccionat == -1) return; // Si l'usuari tanca la finestra, no fem res
-        reproduirSo("/menuClick.wav");
+        reproduirSo("/Sound/menuClick.wav");
 
         // Guardem l'idioma seleccionat per passar-lo a la VentanaJuego
         String idiomaTriat = idiomes[idSeleccionat];
 
-        // Demanem el nom segons l'idioma que hagi triat
-        String nom = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom d'usuari:" : "Nombre de usuario:"));
-        if (nom == null || nom.trim().isEmpty()) return; // Si no posa nom, cancel·lem
-        reproduirSo("/menuClick.wav");
+        // Demanem dades Jugador 1
+        String nom1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 1:" : "Nombre Jugador 1:"));
+        if (nom1 == null || nom1.trim().isEmpty()) return;
+        String nick1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 1:" : "Nickname Jugador 1:"));
+        if (nick1 == null || nick1.trim().isEmpty()) return;
 
-        // Parem la música del menú per a que no s'ajunti amb la del joc
+        // Demanem dades Jugador 2
+        String nom2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 2:" : "Nombre Jugador 2:"));
+        if (nom2 == null || nom2.trim().isEmpty()) return;
+        String nick2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 2:" : "Nickname Jugador 2:"));
+        if (nick2 == null || nick2.trim().isEmpty()) return;
+
+        reproduirSo("/Sound/menuClick.wav");
+
+        // Parem la musica del menu per a que no s'ajunti amb la del joc
         if (musicaMenu != null && musicaMenu.isRunning()) {
             musicaMenu.stop();
         }
 
-        // Ara li passem els 3 arguments que demana el constructor
-        VentanaJoc joc = new VentanaJoc(1, nom, idiomaTriat); 
+        // Creem l'objecte Partida amb els 6 paràmetres segons el teu nou constructor
+        Partida novaPartida = new Partida(nom1, nick1, nom2, nick2, idiomaTriat, 1);
+
+        // Ara passem l'objecte Partida i la instància d'hibernate al constructor de VentanaJoc
+        VentanaJoc joc = new VentanaJoc(novaPartida, hibernate);
         joc.setVisible(true); // Fem que aparegui la pantalla de joc
-        this.dispose(); // Tanquem aquest menú principal
-        
-        // Lancem el joc en un fil nou perquè tot vagi fluid
-        new Thread(() -> joc.iniciarJoc()).start();
+        joc.iniciarJoc(); // Engeguem el joc
+        this.dispose(); // Tanquem aquest menu principal
+    }
+
+    private void accioBotoContinuar() {
+        File fitxer = new File(FITXER_PARTIDA);
+
+        if (!fitxer.exists()) {
+            JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada");
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "¿Quieres continuar la partida guardada?",
+                "Continuar partida",
+                JOptionPane.YES_NO_OPTION);
+
+        if (resposta == JOptionPane.YES_OPTION) {
+            continuarPartidaGuardada();
+        }
+    }
+
+    private void continuarPartidaGuardada() {
+        try {
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(FITXER_PARTIDA));
+            Partida partidaGuardada = (Partida) entrada.readObject();
+            entrada.close();
+
+            if (musicaMenu != null && musicaMenu.isRunning()) {
+                musicaMenu.stop();
+            }
+
+            VentanaJoc joc = new VentanaJoc(partidaGuardada, hibernate);
+            joc.setVisible(true);
+            joc.iniciarJoc();
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No se ha podido continuar la partida guardada");
+        }
     }
 
     // Una finestra emergent que explica com es juga
     private void mostrarRegles() {
         String textRegles = "REGLES DEL JOC \n\n"
-                + "1. Mou la raqueta amb el ratolí o les fletxes per colpejar la pilota.\n"
-                + "2. La puntuació equival al temps transcorregut en milisegons.\n"
-                + "3. CADA 20 SEGONS es pujarà de nivell.\n"
-                + "4. La velocitat augmentarà un 10% en cada canvi de nivell.\n"
-                + "5. Si la pilota toca el terra, la partida finalitza.";
-        UIManager.put("OptionPane.messageForeground", Color.BLACK); // Text en negre per a que es llegeixi bé
+                + "1. Juguen dos jugadors alhora en mode cooperatiu.\n"
+                + "2. El jugador de dalt mou la raqueta amb A i D.\n"
+                + "3. El jugador de baix mou la raqueta amb les fletxes esquerra i dreta.\n"
+                + "4. La puntuacio equival al temps transcorregut en milisegons.\n"
+                + "5. CADA 20 SEGONS es pujara de nivell.\n"
+                + "6. La velocitat augmentara un 10% en cada canvi de nivell.\n"
+                + "7. Si la pilota surt per dalt o per baix, aquesta pilota es perd.";
+        UIManager.put("OptionPane.messageForeground", Color.BLACK);
         JOptionPane.showMessageDialog(this, textRegles, "Reglas del Proyecto ABP", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
-     * Funció per carregar la música i que no pari de sonar 
+     * Funcio per carregar la musica i que no pari de sonar
      * @param ruta
      */
     private void reproduirMusicaMenu(String ruta) {
         try {
-            URL url = getClass().getResource(ruta); // Busquem l'arxiu de so
+            URL url = getClass().getResource(ruta);
             if (url != null) {
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
                 musicaMenu = AudioSystem.getClip();
                 musicaMenu.open(ais);
-                musicaMenu.loop(Clip.LOOP_CONTINUOUSLY); // Posem el bucle infinit
-                musicaMenu.start(); // Engeguem la música
+                musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
+                musicaMenu.start();
             }
         } catch (Exception e) {
-            System.out.println("Error música menú: " + e.getMessage());
+            System.out.println("Error musica menu: " + e.getMessage());
         }
     }
 
     /**
-     * Funció per a sons curts 
+     * Funcio per a sons curts
      * @param ruta
      */
     private void reproduirSo(String ruta) {
@@ -168,7 +260,7 @@ public class MenuInici extends JFrame {
                 AudioInputStream ais = AudioSystem.getAudioInputStream(url);
                 Clip clip = AudioSystem.getClip();
                 clip.open(ais);
-                clip.start(); // Sona un cop i s'acaba
+                clip.start();
             }
         } catch (Exception e) {
             System.out.println("Error sonido: " + e.getMessage());
@@ -177,7 +269,6 @@ public class MenuInici extends JFrame {
 
     // El punt d'inici de tot el programa
     public static void main(String args[]) {
-        // Cridem a la interfície visual de forma segura
         java.awt.EventQueue.invokeLater(() -> new MenuInici().setVisible(true));
     }
 }

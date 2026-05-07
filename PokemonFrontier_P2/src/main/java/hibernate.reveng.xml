@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+	<table-filter match-name="puntuaciones"
+		match-catalog="retro_tennis_part2">
+	</table-filter>
+	<table-filter match-name="usuarios"
+		match-catalog="retro_tennis_part2">
+	</table-filter>
+	<table-filter match-schema="retro_tennis_part2" match-name=".*"></table-filter>
+</hibernate-reverse-engineering>
