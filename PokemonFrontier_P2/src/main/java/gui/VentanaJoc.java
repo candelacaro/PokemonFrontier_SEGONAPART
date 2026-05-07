@@ -67,7 +67,7 @@ public class VentanaJoc extends JFrame {
 	// Recursos i lògica externa
 	private Timer temporitzadorJoc;
 	private final RecursosJoc recursos = new RecursosJoc();
-	private final ConfigManager config = new ConfigManager();
+	private ConfigManager config = new ConfigManager();
 	private final GestorObstacles gestorObstacles = new GestorObstacles();
 	private final PuntuacionsRepository puntuacionsRepository;
 	private final DesarPuntuacions desarPuntuacions;
@@ -350,9 +350,11 @@ public class VentanaJoc extends JFrame {
 
 	private void mostrarTop10() {
 
-	    List<Puntuacio> top = puntuacionsRepository.obtenirTop10();
+		    config = new ConfigManager();
 
-	    StringBuilder sb = new StringBuilder("TOP 10\n\n");
+		    List<Puntuacio> top = puntuacionsRepository.obtenirTop10();
+
+		    StringBuilder sb = new StringBuilder("TOP 10\n\n");
 
 	    int i = 1;
 	    for (Puntuacio p : top) {
@@ -364,12 +366,17 @@ public class VentanaJoc extends JFrame {
 	    area.setEditable(false);
 	    area.setOpaque(true);
 
+	    // CARGAR COLOR GUARDADO
+	    Color fondo = convertirColor(config.getColorPuntuacio());
+
+	    area.setBackground(fondo);
+	    area.setForeground(Color.WHITE);
+
 	    JScrollPane scroll = new JScrollPane(area);
 
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new BorderLayout());
 
-	    Color fondo = convertirColor(config.getColorPuntuacio());
 	    panel.setBackground(fondo);
 
 	    scroll.getViewport().setOpaque(true);
@@ -383,12 +390,12 @@ public class VentanaJoc extends JFrame {
 	    btnColor.addActionListener(e -> {
 
 	    	String[] opciones = {
-	    		    "WHITE",
-	    		    "YELLOW",
+	    		    "BLACK",
 	    		    "RED",
 	    		    "BLUE",
-	    		    "GREEN",
-	    		};	    	
+	    		    "GREEN"
+	    		};
+
 	        String seleccion = (String) JOptionPane.showInputDialog(
 	                panel,
 	                "Selecciona color:",
@@ -401,15 +408,22 @@ public class VentanaJoc extends JFrame {
 
 	        if (seleccion != null) {
 
+	            // guardar en archivo
 	            config.setColorPuntuacio(seleccion);
+
+	            // recargar config
+	            config = new ConfigManager();
 
 	            Color nuevo = convertirColor(seleccion);
 
 	            panel.setBackground(nuevo);
+	            scroll.setBackground(nuevo);
 	            scroll.getViewport().setBackground(nuevo);
-	            area.setBackground(nuevo);
 
-	            area.setForeground(nuevo.equals(Color.WHITE) ? Color.BLACK : Color.BLACK);
+	            area.setBackground(nuevo);
+	            area.setForeground(Color.WHITE);
+
+	            panel.repaint();
 	        }
 	    });
 
@@ -442,7 +456,7 @@ public class VentanaJoc extends JFrame {
 			case "BLUE": return Color.BLUE;
 			case "GREEN": return Color.GREEN;
 			case "YELLOW": return Color.YELLOW;
-			default: return Color.WHITE;
+			default: return Color.BLACK;
 		}
 	}
 

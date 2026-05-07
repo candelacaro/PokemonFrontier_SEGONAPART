@@ -10,51 +10,68 @@ public class ConfigManager {
     private Properties props = new Properties();
 
     public ConfigManager() {
-        load();
+        cargar();
     }
 
-    
-    private void load() {
-        try (InputStream is = new FileInputStream(CONFIG_FILE)) {
-            props.load(is);
-        } catch (IOException e) {
-            System.out.println("No se encontró config.properties, se crea uno nuevo");
+    private void cargar() {
 
-            // valores por defecto
+        File archivo = new File(CONFIG_FILE);
+
+        // si no existe, crear uno
+        if (!archivo.exists()) {
+
             props.setProperty("idioma", "Catala");
             props.setProperty("colorPuntuacio", "WHITE");
             props.setProperty("volumen", "70");
 
-            save(); // lo crea
+            guardar();
+        }
+
+        // cargar archivo
+        try (InputStream is = new FileInputStream(archivo)) {
+
+            props.load(is);
+
+        } catch (IOException e) {
+
+            System.out.println("Error cargando config.properties");
+            e.printStackTrace();
+        }
+    }
+
+    public void guardar() {
+
+        try (OutputStream out = new FileOutputStream(CONFIG_FILE)) {
+
+            props.store(out, "Configuracion del juego");
+
+        } catch (IOException e) {
+
+            System.out.println("Error guardando config.properties");
+            e.printStackTrace();
         }
     }
 
    
+
     public String getIdioma() {
-        return props.getProperty("idioma", "Catala");
+        return props.getProperty("idioma");
     }
 
     public String getColorPuntuacio() {
-        return props.getProperty("colorPuntuacio", "WHITE");
+        return props.getProperty("colorPuntuacio");
     }
 
     public int getVolumen() {
-        return Integer.parseInt(props.getProperty("volumen", "70"));
+        return Integer.parseInt(props.getProperty("volumen"));
     }
 
-  
+
+
     public void setColorPuntuacio(String color) {
-        props.setProperty("colorPuntuacio", color);
-        save();
-    }
 
- 
-    private void save() {
-        try (OutputStream out = new FileOutputStream(CONFIG_FILE)) {
-            props.store(out, "Configuración del juego");
-        } catch (IOException e) {
-            System.out.println("Error guardando config.properties");
-            e.printStackTrace();
-        }
+        props.setProperty("colorPuntuacio", color);
+
+        guardar();
     }
 }
