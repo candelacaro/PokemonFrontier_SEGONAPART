@@ -23,6 +23,7 @@ public class ConfigManager {
         } catch (IOException e) {
             System.out.println("Error cargando config.properties");
             e.printStackTrace();
+            
         }
     }
 
@@ -37,4 +38,6 @@ public class ConfigManager {
     public int getVolumen() {
         return Integer.parseInt(props.getProperty("volumen", "70"));
     }
+    
 }
+

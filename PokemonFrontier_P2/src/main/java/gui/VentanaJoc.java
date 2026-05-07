@@ -423,7 +423,10 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		// Dibuixem els textos d'informacio (Nicknames, Punts, Nivell) adaptats a l'idioma
 		String colorText = config.getColorPuntuacio();
 
-		switch (colorText.toUpperCase()) {
+		if (colorText == null) {
+		    colorText = "WHITE";
+		}
+		switch (colorText.trim().toUpperCase()) {
 		    case "RED": g2d.setColor(Color.RED); break;
 		    case "BLUE": g2d.setColor(Color.BLUE); break;
 		    case "GREEN": g2d.setColor(Color.GREEN); break;
