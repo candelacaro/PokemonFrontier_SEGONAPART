@@ -18,7 +18,15 @@ public class Partida implements Serializable {
     private String nomJugador2; // El nom que ha posat el jugador 2 al menu
     private String nickName1;
     private String nickName2;
-    private String idioma; // Si ha triat Catala o Castella
+    private String idioma;// Si ha triat Catala o Castella
+
+    public String getIdioma() {
+        return idioma;
+    }
+
+    public void setIdioma(String idioma) {
+        this.idioma = idioma;
+    }
     private int nivell;     // El nivell on ha comencat o on es troba
     private long punts; // Els punts que portava la partida quan es va guardar
 

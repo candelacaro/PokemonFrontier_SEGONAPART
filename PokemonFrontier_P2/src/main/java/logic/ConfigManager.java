@@ -33,8 +33,8 @@ public class ConfigManager {
         // Estructura condicional o avalua si no existeix, crea un de nou
         if (!archivo.exists()) {
         		//Amb el mètode setter modifiquem, per defecte l'idioma en català
-            props.setProperty("idioma", "Catala");
-            //Amb el mètode setter modifiquem, per defecte el color de la puntuació en blanc
+        	props.setProperty("idioma", "Catala");
+        	//Amb el mètode setter modifiquem, per defecte el color de la puntuació en blanc
             props.setProperty("colorPuntuacio", "WHITE");
             //Amb el mètode setter modifiquem, per defecte el volum a 70
             props.setProperty("volumen", "70");
@@ -98,6 +98,15 @@ public class ConfigManager {
         props.setProperty("volumen", volumen);
 
         guardar();
+    }
+    public void setIdioma(String idioma) {
+
+        props.setProperty("idioma", idioma);
+
+        guardar();
+    }
+    public String t(String Catala, String Castellano) {
+        return "Castellano".equals(getIdioma()) ? Castellano : Catala;
     }
 }
 

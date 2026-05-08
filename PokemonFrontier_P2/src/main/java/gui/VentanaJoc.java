@@ -95,7 +95,7 @@ public class VentanaJoc extends JFrame {
 	 */
 	public VentanaJoc(Partida partida, HibernateUtil hibernate) {
 		this.partida = partida;
-		this.idioma = "Català"; // Es podria obtenir de partida.getIdioma()
+		this.idioma = partida.getIdioma();
 
 		this.puntuacionsRepository = new PuntuacionsRepository(hibernate);
 		this.desarPuntuacions = new DesarPuntuacions(puntuacionsRepository);
@@ -304,7 +304,7 @@ public class VentanaJoc extends JFrame {
 	private void dibuixarTextos(final Graphics2D g2d) {
 		
 		g2d.setFont(new Font("Arial", Font.BOLD, 14));
-		String labelPunts = idioma.equals("Català") ? "Punts: " : "Puntos: ";
+		String labelPunts = idioma.equals("Catala") ? "Punts: " : "Puntos: ";
 		g2d.drawString("J1: " + partida.getNickName1(), 20, 50);
 		g2d.drawString("J2: " + partida.getNickName2(), 20, 70);
 		g2d.drawString(labelPunts + getPunts(), 20, 90);
@@ -323,7 +323,7 @@ public class VentanaJoc extends JFrame {
 	}
 
 	private void preguntarDesarPartida() {
-		String msg = idioma.equals("Català") ? "Vols desar la partida?" : "¿Quieres guardar la partida?";
+		String msg = idioma.equals("Catala") ? "Vols desar la partida?" : "¿Quieres guardar la partida?";
 		int res = JOptionPane.showConfirmDialog(this, msg, "Save", JOptionPane.YES_NO_OPTION);
 		if (res == JOptionPane.YES_OPTION)
 			guardarPartida();
@@ -337,9 +337,11 @@ public class VentanaJoc extends JFrame {
 			oos.writeObject(partida);
 			oos.close();
 			pararITornarAlMenu();
-			JOptionPane.showMessageDialog(this, "Guardat correctament");
+			JOptionPane.showMessageDialog(this,
+			        config.t("Guardat correctament", "Guardado correctamente"));
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Error en guardar");
+			JOptionPane.showMessageDialog(this,
+			        config.t("Error en guardar", "Error al guardar"));
 		}
 	}
 
@@ -406,8 +408,9 @@ public class VentanaJoc extends JFrame {
 	    scroll.setBackground(fondo);
 
 	    
-	    JButton btnColor = new JButton("Cambiar color");
-
+	    JButton btnColor = new JButton(
+	            config.t("Canviar color", "Cambiar color"));
+	    
 	    btnColor.addActionListener(e -> {
 
 	    	String[] opciones = {
@@ -417,15 +420,15 @@ public class VentanaJoc extends JFrame {
 	    		    "GREEN"
 	    		};
 
-	        String seleccion = (String) JOptionPane.showInputDialog(
-	                panel,
-	                "Selecciona color:",
-	                "Configuración",
-	                JOptionPane.QUESTION_MESSAGE,
-	                null,
-	                opciones,
-	                opciones[0]
-	        );
+	    	String seleccion = (String) JOptionPane.showInputDialog(
+	    	        panel,
+	    	        config.t("Selecciona color:", "Selecciona color:"),
+	    	        config.t("Configuració", "Configuración"),
+	    	        JOptionPane.QUESTION_MESSAGE,
+	    	        null,
+	    	        opciones,
+	    	        opciones[0]
+	    	);
 
 	        if (seleccion != null) {
 
@@ -526,11 +529,9 @@ public class VentanaJoc extends JFrame {
 			g2d.setFont(new Font("Impact", Font.BOLD, 50));
 			g2d.drawString("PAUSA", 130, 300);
 
-			String msgPausa = idioma.equals("Català") ? "Prem 'Q' per continuar" : "Pulsa 'Q' para continuar";
-			String msgGuardar = idioma.equals("Català") ? "Prem 'S' per desar la partida"
-					: "Pulsa 'S' para guardar la partida";
-			String msgMenu = idioma.equals("Català") ? "Prem 'Esc' per sortir al menu"
-					: "Pulsa 'Esc' para salir al menu";
+			String msgPausa = config.t("Prem 'Q' per continuar", "Pulsa 'Q' para continuar");
+			String msgGuardar = config.t("Prem 'S' per desar la partida", "Pulsa 'S' para guardar la partida");
+			String msgMenu = config.t("Prem 'Esc' per sortir al menú", "Pulsa 'Esc' para salir al menú");
 			g2d.setFont(new Font("Arial", Font.PLAIN, 15));
 			g2d.drawString(msgPausa, 125, 340);
 			g2d.drawString(msgGuardar, 125, 360);

@@ -56,7 +56,9 @@ public class MenuInici extends JFrame {
         //Crida del mètode reproduirMusicaMenu() i pasem com a paràmetre la música de l'introducció del joc
         reproduirMusicaMenu("/Sound/introJoc.wav");
     }
-
+    private String t(String Catala, String Castellano) {
+        return config.getIdioma().equals("Castellano") ? Castellano : Catala;
+    }
     /**
      * Mètode que configura tot el disseny visual del menu
      */
@@ -80,12 +82,12 @@ public class MenuInici extends JFrame {
         titol.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
         // Creem els botons
-        JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Boto verd
-        JButton btnContinuar = crearBotoEstilitzat("CONTINUAR", new Color(241, 196, 15)); // Boto groc
-        JButton btnRegles = crearBotoEstilitzat("REGLAS", new Color(52, 152, 219)); // Boto blau
-        JButton btnVolumen = crearBotoEstilitzat("VOLUMEN", new Color(155, 89, 182));	
-        JButton btnSortir = crearBotoEstilitzat("SALIR", new Color(231, 76, 60)); // Boto vermell
-
+        JButton btnJugar = crearBotoEstilitzat(t("JUGAR", "JUGAR"), new Color(46, 204, 113));
+        JButton btnContinuar = crearBotoEstilitzat(t("CONTINUAR", "CONTINUAR"), new Color(241, 196, 15));
+        JButton btnRegles = crearBotoEstilitzat(t("REGLES", "REGLAS"), new Color(52, 152, 219));
+        JButton btnIdioma = crearBotoEstilitzat("IDIOMA", new Color(52, 152, 219));
+        JButton btnVolumen = crearBotoEstilitzat("VOLUMEN", new Color(155, 89, 182));
+        JButton btnSortir = crearBotoEstilitzat(t("SORTIR", "SALIR"), new Color(231, 76, 60));
         // Programem que passa quan cliquem a JUGAR
         btnJugar.addActionListener(e -> {
             reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
@@ -108,7 +110,7 @@ public class MenuInici extends JFrame {
             reproduirSo("/Sound/menuClick.wav");
 
             String[] opciones = {
-                "0",
+                "0", //Finals
                 "25",
                 "50",
                 "75",
@@ -117,8 +119,8 @@ public class MenuInici extends JFrame {
 
             String seleccion = (String) JOptionPane.showInputDialog(
                     this,
-                    "Selecciona volumen:",
-                    "Configuración",
+                    config.t("Selecciona volumen:", "Selecciona volumen:"),
+                    config.t("Configuració", "Configuración"),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     opciones,
@@ -151,20 +153,47 @@ public class MenuInici extends JFrame {
                 }
 
                 JOptionPane.showMessageDialog(this,
-                        "Volumen guardado: " + seleccion);
+                        config.t("Volum guardat: ", "Volumen guardado:") + seleccion);
+            }
+        });
+        btnIdioma.addActionListener(e -> {
+            reproduirSo("/Sound/menuClick.wav");
+
+            String[] idiomes = {"Catala", "Castellano"};
+            
+            String seleccion = (String) JOptionPane.showInputDialog(
+                    this,
+                    config.t("Selecciona idioma:", "Selecciona idioma:"),
+                    config.t("Idioma", "Idioma"),
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    idiomes,
+                    config.getIdioma()
+            );
+
+            if (seleccion != null) {
+                config.setIdioma(seleccion);
+
+                JOptionPane.showMessageDialog(this, config.t("Idioma guardat", "Idioma guardado"));
+
+                this.dispose();
+                new MenuInici().setVisible(true);
             }
         });
         // Programem el boto de sortir
         btnSortir.addActionListener(e -> System.exit(0)); // Tanquem el programa del tot
 
         // Anem afegint els elements al panell amb espais entremig
-        panellPrincipal.add(titol);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 40))); // Espai de 40 pixels sota el titol
         panellPrincipal.add(btnJugar);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15))); // Espai de 15 entre botons
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+
         panellPrincipal.add(btnContinuar);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+
         panellPrincipal.add(btnRegles);
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        panellPrincipal.add(btnIdioma); 
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
 
         panellPrincipal.add(btnVolumen);
@@ -196,43 +225,39 @@ public class MenuInici extends JFrame {
      * Mètode que gestiona tota la logica abans de que la pilota comenci a moure's
      */
     private void accioBotoJugar() {
-        String[] idiomes = {"Català", "Castellano"}; // Opcions per a la finestra
-        //Declaració i inicialització de variable per mostrar els missatges
-        int idSeleccionat = JOptionPane.showOptionDialog(this, "Selecciona idioma:", "Configuracion",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, idiomes, idiomes);
-
-        //Estructura condicional on si l'idSeleccionat és igual -1 es tanca la finestra
-        if (idSeleccionat == -1) {
-        		return; // Si l'usuari tanca la finestra, no fem res
-        }
+       
+    	String idiomaTriat = config.getIdioma();
+        
         //Crida del mètode reproduirSo amb el so que es fa cada vegada que es fa click
         reproduirSo("/Sound/menuClick.wav");
 
-        // Guardem l'idioma seleccionat per passar-lo a la VentanaJuego
-        String idiomaTriat = idiomes[idSeleccionat];
-
         // Declaració i inicialització de varible que demana dades del Jugador 1
-        String nom1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 1:" : "Nombre Jugador 1:"));
-        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        String nom1 = JOptionPane.showInputDialog(this,
+        	    (idiomaTriat.equals("Catala") ? "Nom Jugador 1:" : "Nombre Jugador 1:")
+        	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nom1 == null || nom1.trim().isEmpty()) {
         		return;
         }
         //Declaració i inicialització de varible que demana dades del nickname 1
-        String nick1 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 1:" : "Nickname Jugador 1:"));
-        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        String nick1 = JOptionPane.showInputDialog(this,
+        	    (idiomaTriat.equals("Catala") ? "Nickname Jugador 1:" : "Nickname Jugador 1:")
+        	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nick1 == null || nick1.trim().isEmpty()) {
         		return;
         }
 
         // Declaració i inicialització de varible que demana dades del Jugador 2
-        String nom2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nom Jugador 2:" : "Nombre Jugador 2:"));
+        String nom2 = JOptionPane.showInputDialog(this,
+        	    (idiomaTriat.equals("Catala") ? "Nom Jugador 2:" : "Nombre Jugador 2:")
+        	);
         //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nom2 == null || nom2.trim().isEmpty()) {
         		return;
         }
         //Declaració i inicialització de varible que demana dades del nickname 2
-        String nick2 = JOptionPane.showInputDialog(this, (idSeleccionat == 0 ? "Nickname Jugador 2:" : "Nickname Jugador 2:"));
-        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        String nick2 = JOptionPane.showInputDialog(this,
+        	    (idiomaTriat.equals("Catala") ? "Nickname Jugador 2:" : "Nickname Jugador 2:")
+        	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nick2 == null || nick2.trim().isEmpty()) {
         		return;
         }
@@ -266,23 +291,29 @@ public class MenuInici extends JFrame {
 
         //Estructura condicional on avalua si hi ha alguna partida guardada
         if (!fitxer.exists()) {
-        		//Mostra de missatge
-            JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada");
-            //No retornem res
+            JOptionPane.showMessageDialog(this,
+                config.t("No hi ha cap partida guardada",
+                         "No hay ninguna partida guardada"));
             return;
         }
 
         //Declaració i inicialització de variable int, on es mostra la pregunta, i la opció si o no
-        int resposta = JOptionPane.showConfirmDialog(this,
-                "¿Quieres continuar la partida guardada?",
-                "Continuar partida",
-                JOptionPane.YES_NO_OPTION);
+        int resposta = JOptionPane.showConfirmDialog(
+                this,
+                config.t("Vols continuar la partida guardada?",
+                         "¿Quieres continuar la partida guardada?"),
+                config.t("Continuar partida", "Continuar partida"),
+                JOptionPane.YES_NO_OPTION
+        );
 
         //Estructura condicional on avalua si respon que si
         if (resposta == JOptionPane.YES_OPTION) {
         		//Crida del mètode continuarPartidaGuardada()
             continuarPartidaGuardada();
         }
+        JOptionPane.showMessageDialog(this,
+                config.t("No s'ha pogut continuar la partida guardada",
+                         "No se ha podido continuar la partida guardada"));
     }
 
     /**
@@ -324,14 +355,27 @@ public class MenuInici extends JFrame {
      */
     private void mostrarRegles() {
     		//Mostra del text
-        String textRegles = "REGLES DEL JOC \n\n"
-                + "1. Juguen dos jugadors alhora en mode cooperatiu.\n"
-                + "2. El jugador de dalt mou la raqueta amb A i D.\n"
-                + "3. El jugador de baix mou la raqueta amb les fletxes esquerra i dreta.\n"
-                + "4. La puntuacio equival al temps transcorregut en milisegons.\n"
-                + "5. CADA 20 SEGONS es pujara de nivell.\n"
-                + "6. La velocitat augmentara un 10% en cada canvi de nivell.\n"
-                + "7. Si la pilota surt per dalt o per baix, aquesta pilota es perd.";
+    	String textRegles = config.t(
+    			
+    			"REGLES DEL JOC\n\n"
+    	    		    + "1. Juguen dos jugadors en mode cooperatiu.\n"
+    	    		    + "2. El jugador de dalt mou la raqueta amb A i D.\n"
+    	    		    + "3. El jugador de baix mou la raqueta amb fletxes.\n"
+    	    		    + "4. La puntuació és el temps en mil·lisegons.\n"
+    	    		    + "5. Cada 20 segons puja de nivell.\n"
+    	    		    + "6. La velocitat augmenta un 10% per nivell.\n"
+    	    		    + "7. Si la pilota surt, es perd.",
+    		    "REGLAS DEL JUEGO\n\n"
+    		    + "1. Juegan dos jugadores en modo cooperativo.\n"
+    		    + "2. El jugador de arriba mueve la raqueta con A y D.\n"
+    		    + "3. El jugador de abajo mueve la raqueta con flechas.\n"
+    		    + "4. La puntuación es el tiempo en milisegundos.\n"
+    		    + "5. Cada 20 segundos sube de nivel.\n"
+    		    + "6. La velocidad aumenta un 10% por nivel.\n"
+    		    + "7. Si la pelota sale, se pierde."
+
+    		   
+    		);
         UIManager.put("OptionPane.messageForeground", Color.BLACK);
         //Mostrem el missatge en una finestra emergent
         JOptionPane.showMessageDialog(this, textRegles, "Regles del Projecte ABP", JOptionPane.INFORMATION_MESSAGE);
