@@ -14,10 +14,9 @@ import logic.db.HibernateUtil;
 /**
  * Aquesta classe es el menú i el primer que es veu del joc; és el primer que veu l'usuari, posem una música de fons
  * de la temàtica del nostre joc.
- * Hem posat 3 botons: el de Jugar, després de donar-li et preguntara l'idioma, el nom d'usuari i també el nivell.
+ * Hem posat 6 botons: el de Jugar, l'idioma, volum, continuar, regles i sortir.
  * Una finestra emergent explica les regles del joc per informar a l'usuari amb abans de començar.
  * Quan l'usuari clica a jugar, tanquem el menu i obrim la finestra de joc.
- * També tenim el boto de sortir, que si li dones es tancara el programa.
  * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class MenuInici extends JFrame {
@@ -61,9 +60,18 @@ public class MenuInici extends JFrame {
         //Crida del mètode reproduirMusicaMenu() i pasem com a paràmetre la música de l'introducció del joc
         reproduirMusicaMenu("/Sound/introJoc.wav");
     }
+    
+    /**
+     * Mètode String per l'idioma
+     * @param Catala, idioma en català
+     * @param Castellano, idioma en castellà
+     * @return l'idioma triat
+     */
     private String t(String Catala, String Castellano) {
+    		//Si escull Castellano retornem Castellano si no Català
         return config.getIdioma().equals("Castellano") ? Castellano : Catala;
     }
+    
     /**
      * Mètode que configura tot el disseny visual del menu
      */
@@ -110,10 +118,13 @@ public class MenuInici extends JFrame {
             reproduirSo("/Sound/menuClick.wav"); // So de clic
             mostrarRegles(); // Ensenyem la finestra amb les instruccions
         });
+        
+        //Botó volum, dona opcions per regular el volum del joc
         btnVolumen.addActionListener(e -> {
 
-            reproduirSo("/Sound/menuClick.wav");
+            reproduirSo("/Sound/menuClick.wav");// So de clic
 
+            //Mostrem les possibles opcions
             String[] opciones = {
                 "0", //Finals
                 "25",
@@ -122,6 +133,7 @@ public class MenuInici extends JFrame {
                 "100"
             };
 
+            //Mostrem el missatge en un panell
             String seleccion = (String) JOptionPane.showInputDialog(
                     this,
                     config.t("Selecciona volumen:", "Selecciona volumen:"),
@@ -129,43 +141,56 @@ public class MenuInici extends JFrame {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     opciones,
-                    String.valueOf(config.getVolumen())
+                    String.valueOf(config.getVolumen()) //Accedim amb el volum amb mètode getter
             );
 
+            //Si la selecció no és nul·la modifiquem el valor
             if (seleccion != null) {
 
+            		//Modifiquem el valor del volum amb el mètode setter
                 config.setVolumen(seleccion);
 
-                // aplicar volumen inmediatamente
+                // Si la música no és nul·la apliquem el volume immediatament
                 if (musicaMenu != null) {
-
+                		
+                		/*Declaració i inicialització de FloatControl (permet controlar un rang de valors de punt flotant per a 
+                		funcions d'àudio, com ara ajustar el volum) */
                     FloatControl gainControl =
-                            (FloatControl) musicaMenu.getControl(FloatControl.Type.MASTER_GAIN);
-
+                            (FloatControl) musicaMenu.getControl(FloatControl.Type.MASTER_GAIN); //control principal de guany (volum) d'una línia d'àudio.
+                    
+                    //Declaració i inicialització de variable on passem la selecció a int
                     int volumen = Integer.parseInt(seleccion);
 
+                    //Si el volum és igual a 0 s'executa
                     if (volumen == 0) {
-
+                    		//Control de la modificació del volum al mínim
                         gainControl.setValue(gainControl.getMinimum());
 
                     } else {
-
+                    		//Declaració i inicialització de float que calcula el nivell de volum o ganancia en decibelis 
                         float db = (float) (Math.log(volumen / 100.0)
                                 / Math.log(10.0) * 20.0);
-
+                        
+                        //Modifiquem el valor amb el mètode setValue
                         gainControl.setValue(db);
                     }
                 }
 
+                //Panell que et mostra el missatge i la selecció
                 JOptionPane.showMessageDialog(this,
                         config.t("Volum guardat: ", "Volumen guardado:") + seleccion);
             }
         });
+        
+        //Botó per fer canvi d'idiomes
         btnIdioma.addActionListener(e -> {
+        		//Reproduim el so 
             reproduirSo("/Sound/menuClick.wav");
-
+            
+            //Declaració i inicialització d'Array de String
             String[] idiomes = {"Catala", "Castellano"};
             
+            //Declaració i inicialització  de variable per mostrar el panell fent casting
             String seleccion = (String) JOptionPane.showInputDialog(
                     this,
                     config.t("Selecciona idioma:", "Selecciona idioma:"),
@@ -176,13 +201,18 @@ public class MenuInici extends JFrame {
                     config.getIdioma()
             );
 
+            //Estructura condicional on avalua si la selecció no es nul·la
             if (seleccion != null) {
+            		//Modifiquem l'idioma segons la selecció escollida
                 config.setIdioma(seleccion);
 
+                //Panell que et mostra el missatge
                 JOptionPane.showMessageDialog(this, config.t("Idioma guardat", "Idioma guardado"));
                 cerrarMenu(); 
-
+                
+                //Alliberem recursos natius de la finestra
                 this.dispose();
+                //Tornem a mostrat el menuInici amb els canvis aplicats
                 new MenuInici().setVisible(true);
             }
         });
@@ -213,7 +243,12 @@ public class MenuInici extends JFrame {
         this.setSize(450, 500); // Forcem una mida de 400x500
     }
 
-    // Funció per deixar els botons ben polits i iguals
+    /**
+     * Funció per deixar els botons ben polits i iguals
+     * @param text, text que es mostra
+     * @param colorFons, colors que hi ha
+     * @return el botó amb estètica millorada
+     */
     private JButton crearBotoEstilitzat(String text, Color colorFons) {
         JButton boto = new JButton(text);
         boto.setMaximumSize(new Dimension(200, 50)); // Mida màxima del botó
@@ -231,8 +266,8 @@ public class MenuInici extends JFrame {
      * Mètode que gestiona tota la logica abans de que la pilota comenci a moure's
      */
     private void accioBotoJugar() {
-       
-    	String idiomaTriat = config.getIdioma();
+    		//Declaració i inicialització de variable que accedeix a l'idioma que hi ha a la classe configManager
+    		String idiomaTriat = config.getIdioma();
         
         //Crida del mètode reproduirSo amb el so que es fa cada vegada que es fa click
         reproduirSo("/Sound/menuClick.wav");
@@ -357,11 +392,11 @@ public class MenuInici extends JFrame {
     }
 
     /**
-     * Mètode que crea una finestra emergent que explica com es juga
+     * Mètode que crea una finestra emergent que explica com es juga (REGLES DEL JOC)
      */
     private void mostrarRegles() {
     		//Mostra del text
-    	String textRegles = config.t(
+    		String textRegles = config.t(
     			
     			"REGLES DEL JOC\n\n"
     	    		    + "1. Juguen dos jugadors en mode cooperatiu.\n"
@@ -384,7 +419,7 @@ public class MenuInici extends JFrame {
     		);
         UIManager.put("OptionPane.messageForeground", Color.BLACK);
         //Mostrem el missatge en una finestra emergent
-        JOptionPane.showMessageDialog(this, textRegles, "Regles del Projecte ABP", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, textRegles, "Regles de POKEMON FRONTIER", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -404,17 +439,26 @@ public class MenuInici extends JFrame {
                 musicaMenu = AudioSystem.getClip();
                 //Amb el mètode .open() obrim ais
                 musicaMenu.open(ais);
+                
+                /*Declaració i inicialització de FloatControl (permet controlar un rang de valors de punt flotant per a 
+        			funcions d'àudio, com ara ajustar el volum) */
                 FloatControl gainControl =
                         (FloatControl) musicaMenu.getControl(FloatControl.Type.MASTER_GAIN);
 
+                //Declaració i inicialització de variable que té el valor que té Volumen a la classe configManager
                 int volumen = config.getVolumen();
 
+              //Si el volum és igual a 0 s'executa
                 if (volumen == 0) {
+                		//Control de la modificació del volum al mínim
                     gainControl.setValue(gainControl.getMinimum());
+
                 } else {
-
-                    float db = (float) (Math.log(volumen / 100.0) / Math.log(10.0) * 20.0);
-
+                		//Declaració i inicialització de float que calcula el nivell de volum o ganancia en decibelis 
+                    float db = (float) (Math.log(volumen / 100.0)
+                            / Math.log(10.0) * 20.0);
+                    
+                    //Modifiquem el valor amb el mètode setValue
                     gainControl.setValue(db);
                 }
                 //Reproduim la música infinitament
