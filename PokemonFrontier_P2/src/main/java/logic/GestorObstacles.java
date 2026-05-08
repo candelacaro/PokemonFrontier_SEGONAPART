@@ -40,22 +40,29 @@ public class GestorObstacles {
             if (visible[i]) { // Si l'obstacle encara no l'hem trencat
                 Rectangle hitbox = new Rectangle(llistaObstacles[i].x + 5, llistaObstacles[i].y + 5, 30, 30); // Lloc del xoc
                 if (pilota.intersects(hitbox)) { // Si la pilota toca l'obstacle
+                	// L'obstacle desapareix
                     visible[i] = false;
+
                     return true;
                 }
             }
         }
+
+        // Si no hi ha cap xoc
         return false;
     }
 
+    // Retorna la llista d'obstacles
     public Rectangle[] getLlistaObstacles() {
         return llistaObstacles;
     }
 
+    // Retorna la visibilitat dels obstacles
     public boolean[] getVisible() {
         return visible;
     }
 
+    // Retorna el nombre total d'obstacles
     public int getTotalObstacles() {
         return TOTAL_OBSTACLES;
     }

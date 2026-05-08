@@ -90,21 +90,22 @@ public class Partida implements Serializable {
 	}
 
 
-	public int getNivell() {
-		return nivell;
-	}
+	// Retorna el nivell actual
+		public int getNivell() {
+			return nivell;
+		}
 
-	public void setNivell(int nivell) {
-		this.nivell = nivell;
-	}
+		// Modifica el nivell actual
+		public void setNivell(int nivell) {
+			this.nivell = nivell;
+		}
 
-	public long getPunts() {
-		return punts;
-	}
+		// Retorna els punts de la partida
+		public long getPunts() {
+			return punts;
+		}
 
-	public void setPunts(long punts) {
-		this.punts = punts;
-	}
-    
-    
-}
+		// Modifica els punts de la partida
+		public void setPunts(long punts) {
+			this.punts = punts;
+		}}
