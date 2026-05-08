@@ -302,6 +302,13 @@ public class MenuInici extends JFrame {
         if (nick2 == null || nick2.trim().isEmpty()) {
         		return;
         }
+        
+        //Declaració i inicialització de variable que guarda el nivell escollit
+        int nivellTriat = seleccionarNivell(idiomaTriat);
+        //Estructura condicional on s'avalua si no s'ha triat cap nivell
+        if (nivellTriat == -1) {
+        		return;
+        }
 
         //Crida del mètode reproduirSo amb el so que es fa cada vegada que es fa click
         reproduirSo("/Sound/menuClick.wav");
@@ -313,13 +320,46 @@ public class MenuInici extends JFrame {
         }
 
         // Creem l'objecte Partida amb els 6 paràmetres segons el constructor
-        Partida novaPartida = new Partida(nom1, nick1, nom2, nick2, idiomaTriat, 1);
+        Partida novaPartida = new Partida(nom1, nick1, nom2, nick2, idiomaTriat, nivellTriat);
 
         // Ara passem l'objecte Partida i la instància d'hibernate al constructor de VentanaJoc
         VentanaJoc joc = new VentanaJoc(novaPartida, hibernate);
         joc.setVisible(true); // Fem que aparegui la pantalla de joc
         joc.iniciarJoc(); // Engeguem el joc
         this.dispose(); // Tanquem aquest menu principal
+    }
+    
+    /**
+     * Mètode que mostra la selecció de nivell inicial de la partida.
+     * @param idiomaTriat, idioma escollit per mostrar el missatge
+     * @return el nivell triat o -1 si es cancel·la
+     */
+    private int seleccionarNivell(String idiomaTriat) {
+    		//Declaració i inicialització d'Array de String amb els nivells disponibles
+        String[] nivells = new String[20];
+        //Bucle que omple els nivells de l'1 al 20
+        for (int i = 0; i < nivells.length; i++) {
+            nivells[i] = String.valueOf(i + 1);
+        }
+        
+        //Declaració i inicialització de variable per mostrar el panell fent casting
+        String seleccion = (String) JOptionPane.showInputDialog(
+                this,
+                (idiomaTriat.equals("Catala") ? "Selecciona nivell:" : "Selecciona nivel:"),
+                (idiomaTriat.equals("Catala") ? "Nivell inicial" : "Nivel inicial"),
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                nivells,
+                nivells[0]
+        );
+        
+        //Estructura condicional on avalua si la selecció és nul·la
+        if (seleccion == null) {
+            return -1;
+        }
+        
+        //Retornem la selecció convertida a int
+        return Integer.parseInt(seleccion);
     }
 
     /**
