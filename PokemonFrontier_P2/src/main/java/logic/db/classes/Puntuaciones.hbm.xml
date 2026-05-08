@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generated 5 may 2026, 12:11:25 by Hibernate Tools 6.5.1.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class catalog="retro_tennis_part2" name="classes.Puntuaciones" optimistic-lock="none" table="puntuaciones">
+    <class catalog="retro_tennis_part2" name="logic.db.classes.Puntuaciones" optimistic-lock="none" table="puntuaciones">
         <id name="idPuntuacion" type="int">
             <column name="id_puntuacion"/>
-            <generator class="assigned"/>
+            <generator class="native"/>
         </id>
-        <many-to-one class="classes.Usuarios" fetch="select" name="usuarios">
+        <many-to-one class="logic.db.classes.Usuarios" fetch="select" name="usuarios">
             <column name="id_usuario" not-null="true"/>
         </many-to-one>
         <property name="puntuacion" type="long">

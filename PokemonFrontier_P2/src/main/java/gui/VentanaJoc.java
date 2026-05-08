@@ -18,7 +18,10 @@ import javax.swing.JTextArea;
 import javax.swing.Timer;
 import logic.Bola;
 import logic.GestorObstacles;
+import logic.Partida;
 import logic.Raqueta;
+import logic.db.DesarPuntuacions;
+import logic.db.HibernateUtil;
 import logic.db.Puntuacio;
 import logic.db.PuntuacionsRepository;
 
@@ -48,7 +51,8 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 	private final long tempsInici; // Per saber a quina hora hem comencat a jugar
 	private int nivell = 1; // El nivell actual
 	private int comptadorTempsNivell = 0; // Un rellotge intern per saber quan pujar de nivell
-	private final String nomJugador; // El teu nom
+	
+	private final Partida partida; // L'objecte partida amb tota la info dels jugadors
 	private boolean estaPausat = false; // Si el joc esta aturat o no
 	private final String idioma; // Per saber si parlem en catala o castella
 	private boolean pilota2JaActivada = false; // Ens diu si la segona pilota ja ha sortit al nivell 8
@@ -58,51 +62,33 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 
 	private final RecursosJoc recursos = new RecursosJoc(); // Imatges i sons del joc
 	private final GestorObstacles gestorObstacles = new GestorObstacles(); // Obstacles del mapa
-	private final PuntuacionsRepository puntuacionsRepository = new PuntuacionsRepository(); // Classe que parla amb la
-																								// base de dades
+	
+	private final PuntuacionsRepository puntuacionsRepository; // Classe que parla amb la base de dades
+	private final DesarPuntuacions desarPuntuacions; // Classe per gestionar el guardat d'equips
 
 	// Es el que s'executa quan obrim el joc
 
 	/**
-	 * El constructor que rep nivell i nom
-	 * 
-	 * @param nivellTriat
-	 * @param nom
-	 * @param idiomaSeleccionat
+	 * El constructor que rep la partida i l'utiliti d'hibernate
+	 * * @param partida L'objecte amb tota la configuració de la sessió
+	 * @param hibernate La connexió activa a la base de dades
 	 */
-	public VentanaJoc(final int nivellTriat, final String nom, String idiomaSeleccionat) {
+	public VentanaJoc(Partida partida, HibernateUtil hibernate) {
 
-		this.idioma = idiomaSeleccionat; // Guardem l'idioma per a que tot el joc sapiga que mostrar
+		this.partida = partida;
+		this.idioma = "Català"; // Podries usar partida.getIdioma() si cal
+
+		// Inicialitzem les eines de base de dades sense fer servir static
+		this.puntuacionsRepository = new PuntuacionsRepository(hibernate);
+		this.desarPuntuacions = new DesarPuntuacions(puntuacionsRepository);
 
 		// Carreguem els recursos primer de tot per poder utilitzar el so del menu
 		recursos.carregarRecursos(); // Anem a buscar els fitxers de la carpeta resources.
 
-		// Preparem els textos del dialeg segons l'idioma que hagi triat el que juga
-		String titol = idioma.equals("Català") ? "Seleccio de Nivell" : "Seleccion de Nivel";
-		String pregunta = idioma.equals("Català") ? "Introdueix el nivell (1-20):" : "Introduce el nivel (1-20):";
-
-		// Aqui demanem el nivell per teclat amb una finestra blanca
-		String entradaNivell = JOptionPane.showInputDialog(null, pregunta, titol, JOptionPane.QUESTION_MESSAGE);
-
-		// Fem sonar el clic despres de tancar el dialeg
-		reproduirClic(); // Cridem al soroll de menu
-
-		int nivellFinal = 1; // Creem una variable temporal per al nivell
-		try { // Intentem fer la conversio de text a numero sense que exploti
-			nivellFinal = Integer.parseInt(entradaNivell); // Intentem convertir el text en numero
-			if (nivellFinal < 1)
-				nivellFinal = 1; // Si posen menys d'1, posem 1
-			if (nivellFinal > 20)
-				nivellFinal = 20; // Si posen mes de 20, posem 20
-		} catch (Exception e) { // Si passa qualsevol error al escriure
-			nivellFinal = 1; // Si escriuen lletres, comencem al nivell 1 per defecte
-		}
-
-		this.nivell = nivellFinal; // Guardem el nivell triat
-		this.nomJugador = nom; // Guardem el nom
+		this.nivell = partida.getNivell(); // Guardem el nivell triat
 
 		// Apliquem el 10% de velocitat pero respectant el limit maxim
-		for (int i = 1; i < nivellFinal; i++) {
+		for (int i = 1; i < nivell; i++) {
 			pilota1.augmentarVelocitat(VELOCITAT_MAXIMA);
 			pilota2.augmentarVelocitat(VELOCITAT_MAXIMA);
 		}
@@ -125,7 +111,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 			@Override
 			public void keyPressed(final KeyEvent e) { // Quan es prem una tecla.
 				int codi = e.getKeyCode();
-				if (codi == KeyEvent.VK_Q) { // Si la tecla es la Q
+				if (codi == KeyEvent.VK_P) { // Si la tecla es la P
 					setEstaPausat(!getEstaPausat()); // Canviem de pausa a joc o viceversa
 				}
 
@@ -268,22 +254,26 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 
 			// Adaptem el missatge de derrota a l'idioma
 			String titolGameOver = idioma.equals("Català") ? "HAS PERDUT" : "GAME OVER";
-			String etiquetaJug = idioma.equals("Català") ? "Jugador: " : "Jugador: ";
+			String etiquetaJug = idioma.equals("Català") ? "Jugadors: " : "Jugadores: ";
 			String etiquetaPts = idioma.equals("Català") ? "\nPunts: " : "\nPuntos: ";
 
-			// Li mostrem un missatge a l'usuari un game over i li mostrem el nom de
-			// l'usuari i els punts que he conseguit.
+			// Mostrem la info de la parella que jugava
+			String nomsInfo = partida.getNickName1() + " i " + partida.getNickName2();
+
+			// Li mostrem un missatge a l'usuari un game over i li mostrem els noms i els punts que he conseguit.
 			JOptionPane.showMessageDialog(this,
-					titolGameOver + "\n" + etiquetaJug + getNomJugador() + etiquetaPts + getPunts()); // Cartell de
-																										// final
-			logic.db.DesarPuntuacions.guardarPuntuacion(getNomJugador(), getPunts()); // Trucada al nou metode extern
+					titolGameOver + "\n" + etiquetaJug + nomsInfo + etiquetaPts + getPunts()); // Cartell de final
+			
+			// Trucada al mètode d'equip per guardar les dades de la parella
+			desarPuntuacions.guardarPuntuacionEquip(partida, getPunts()); 
+			
 			mostrarTop10(); // Ensenyem el ranquing
 			new MenuInici().setVisible(true); // Tornem al menu
 			this.dispose(); // Tanquem la finestra
 		}
 	}
 
-	// Inicia el cronometre que fa que el joc es mogui 100 vegades per segon
+	// Inicia el cronometre que fa que le joc es mogui 100 vegades per segon
 	public void iniciarJoc() { // El metode que arranca el motor
 		requestFocusInWindow(); // Demanem el focus per poder llegir A/D i les fletxes
 		temporitzadorJoc = new Timer(10, e -> {
@@ -305,14 +295,8 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		Graphics2D g2d = (Graphics2D) gOff; // Fem servir el motor 2D mes modern
 
 		// Millorem la qualitat del dibuix
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR); // Perque
-																												// les
-																												// fotos
-																												// no es
-																												// vegin
-																												// pixelades
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Perque les vores
-																									// siguin suaus
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR); // Perque les fotos no es vegin pixelades
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Perque les vores siguin suaus
 
 		dibuixarFons(g2d);
 		dibuixarObstacles(g2d);
@@ -343,8 +327,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 
 				// Si la imatge s'ha carregat, la dibuixem
 				if (iconaTriada != null && iconaTriada.getImage() != null) { // Seguretat per no pintar buit
-					g2d.drawImage(iconaTriada.getImage(), llistaObstacles[i].x, llistaObstacles[i].y, 40, 40, null); // Pintem
-																														// l'obstacle
+					g2d.drawImage(iconaTriada.getImage(), llistaObstacles[i].x, llistaObstacles[i].y, 40, 40, null); // Pintem l'obstacle
 				}
 			}
 		}
@@ -357,9 +340,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		if (pilota1.isActiva() && imgPilota != null)
 			g2d.drawImage(imgPilota.getImage(), (int) getPilotaX(), (int) getPilotaY(), 30, 30, null); // Pinta bola 1
 		if (pilota2.isActiva() && imgPilota != null)
-			g2d.drawImage(imgPilota.getImage(), (int) pilota2.getX(), (int) pilota2.getY(), 30, 30, null); // Pinta bola
-																											// 2 si n'hi
-																											// ha
+			g2d.drawImage(imgPilota.getImage(), (int) pilota2.getX(), (int) pilota2.getY(), 30, 30, null); // Pinta bola 2 si n'hi ha
 	}
 
 	private void dibuixarRaquetes(final Graphics2D g2d) {
@@ -369,27 +350,22 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		if (imgRaqueta != null) {
 			g2d.drawImage(imgRaqueta.getImage(), raquetaSuperior.getX(), raquetaSuperior.getY() - 10,
 					raquetaSuperior.getAmple(), 40, null); // Pinta la pala superior
-			g2d.drawImage(imgRaqueta.getImage(), raquetaInferior.getX(), 520, raquetaInferior.getAmple(), 40, null); // Pinta
-																														// la
-																														// pala
-																														// inferior
+			g2d.drawImage(imgRaqueta.getImage(), raquetaInferior.getX(), 520, raquetaInferior.getAmple(), 40, null); // Pinta la pala inferior
 		}
 	}
 
 	private void dibuixarTextos(final Graphics2D g2d) {
-		// Dibuixem els textos d'informacio (Nom, Punts, Nivell) adaptats a l'idioma
+		// Dibuixem els textos d'informacio (Nicknames, Punts, Nivell) adaptats a l'idioma
 		g2d.setColor(Color.WHITE); // Color del text en blanc
 		g2d.setFont(new Font("Arial", Font.BOLD, 14)); // Tipus de lletra clara
 
-		String etiquetaJugador = idioma.equals("Català") ? "Jugador: " : "Jugador: ";
 		String etiquetaPunts = idioma.equals("Català") ? "Punts: " : "Puntos: ";
 		String etiquetaNivell = idioma.equals("Català") ? "Nivell: " : "Nivel: ";
 
-		g2d.drawString(etiquetaJugador + getNomJugador(), 20, 50); // Escribim el nom del jugador
-		g2d.drawString(etiquetaPunts + getPunts(), 20, 70); // Escribim els milisegons de puntuacio
-		g2d.drawString(etiquetaNivell + getNivell(), 430, 50); // Escribim el nivell a la dreta
-		g2d.drawString("J1: A/D", 20, 90); // Controls del jugador de dalt
-		g2d.drawString("J2: <- / ->", 20, 110); // Controls del jugador de baix
+		g2d.drawString("J1: " + partida.getNickName1(), 20, 50); // Escribim el nick del jugador 1
+		g2d.drawString("J2: " + partida.getNickName2(), 20, 70); // Escribim el nick del jugador 2
+		g2d.drawString(etiquetaPunts + getPunts(), 20, 90); // Escribim els milisegons de puntuacio
+		g2d.drawString(etiquetaNivell + getNivell(), 410, 50); // Escribim el nivell a la dreta
 	}
 
 	private void dibuixarPausa(final Graphics2D g2d) {
@@ -417,24 +393,17 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 			return; // Si la DB falla, simplement no ensenya la taula
 
 		String colPos = "POS";
-		String colJug = idioma.equals("Català") ? "JUGADOR" : "JUGADOR";
+		String colJug = "JUGADOR";
 		String colPts = idioma.equals("Català") ? "PUNTS" : "PUNTOS";
 
 		String taula = String.format("%-5s %-15s %-10s\n", colPos, colJug, colPts); // Capcalera de la taula
 		int pos = 1; // Comptador de posicio
 		for (Puntuacio puntuacio : puntuacions) { // Mentre hi hagi files de resultat
-			taula += String.format("%-5d %-15s %-10d\n", pos++, puntuacio.getNomJugador(), puntuacio.getPunts()); // Afegim
-																													// linia
-																													// a
-																													// la
-																													// taula
+			taula += String.format("%-5d %-15s %-10d\n", pos++, puntuacio.getNomJugador(), puntuacio.getPunts()); // Afegim linia a la taula
 		}
 		JTextArea area = new JTextArea(taula); // Fem una area de text per ensenyar-ho
 		area.setFont(new Font("Monospaced", Font.PLAIN, 12)); // Font per a que les columnes quedin rectes
-		JOptionPane.showMessageDialog(this, new JScrollPane(area), "TOP 10", JOptionPane.INFORMATION_MESSAGE); // Mostrem
-																												// la
-																												// finestra
-																												// emergent
+		JOptionPane.showMessageDialog(this, new JScrollPane(area), "TOP 10", JOptionPane.INFORMATION_MESSAGE); // Mostrem la finestra emergent
 	}
 
 	// Aqui posem tots els getters i setters
@@ -443,12 +412,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return pilota1.getX();
 	}
 
-	/**
-	 * Canvia la X de la bola
-	 * 
-	 * @param pilotaX
-	 */
-	public void setPilotaX(final double pilotaX) {
+	public void setPilotaX(final double pilotaX) { // Canvia la X de la bola
 		pilota1.setX(pilotaX);
 	}
 
@@ -456,12 +420,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return pilota1.getY();
 	}
 
-	/**
-	 * Canvia la Y de la bola
-	 * 
-	 * @param pilotaY
-	 */
-	public void setPilotaY(final double pilotaY) {
+	public void setPilotaY(final double pilotaY) { // Canvia la Y de la bola
 		pilota1.setY(pilotaY);
 	}
 
@@ -469,12 +428,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return pilota1.getVelX();
 	}
 
-	/**
-	 * Canvia la velocitat lateral
-	 * 
-	 * @param velX
-	 */
-	public void setVelX(final double velX) {
+	public void setVelX(final double velX) { // Canvia la velocitat lateral
 		pilota1.setVelX(velX);
 	}
 
@@ -482,12 +436,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return pilota1.getVelY();
 	}
 
-	/**
-	 * Canvia la velocitat vertical
-	 * 
-	 * @param velY
-	 */
-	public void setVelY(final double velY) {
+	public void setVelY(final double velY) { // Canvia la velocitat vertical
 		pilota1.setVelY(velY);
 	}
 
@@ -495,17 +444,8 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return raquetaInferior.getX();
 	}
 
-	/**
-	 * Movem la pala inferior a una X nova
-	 * 
-	 * @param raquetaX
-	 */
-	public void setRaquetaX(int raquetaX) {
+	public void setRaquetaX(int raquetaX) { // Movem la pala inferior a una X nova
 		raquetaInferior.setX(raquetaX);
-	}
-
-	public int getRaquetaAmple() { // Ens diu quant medeix la pala inferior
-		return raquetaInferior.getAmple();
 	}
 
 	public int getRaquetaSuperiorX() { // Ens dona on esta la pala superior
@@ -532,12 +472,7 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return nivell;
 	}
 
-	/**
-	 * Ens permet canviar el nivell
-	 * 
-	 * @param nivell
-	 */
-	public void setNivell(final int nivell) {
+	public void setNivell(final int nivell) { // Ens permet canviar el nivell
 		this.nivell = nivell;
 	}
 
@@ -545,29 +480,15 @@ public class VentanaJoc extends JFrame { // Fem que aquesta classe sigui una fin
 		return comptadorTempsNivell;
 	}
 
-	/**
-	 * Ajusta el rellotge de nivell
-	 * 
-	 * @param comptador
-	 */
-	public void setComptadorTempsNivell(final int comptador) {
+	public void setComptadorTempsNivell(final int comptador) { // Ajusta el rellotge de nivell
 		this.comptadorTempsNivell = comptador;
-	}
-
-	public String getNomJugador() { // Ens diu el nom del jugador.
-		return nomJugador;
 	}
 
 	public boolean getEstaPausat() { // Ens diu si el joc esta aturat
 		return estaPausat;
 	}
 
-	/**
-	 * Activa o desactiva la pausa
-	 * 
-	 * @param pausat
-	 */
-	public void setEstaPausat(final boolean pausat) {
+	public void setEstaPausat(final boolean pausat) { // Activa o desactiva la pausa
 		this.estaPausat = pausat;
 	}
 }

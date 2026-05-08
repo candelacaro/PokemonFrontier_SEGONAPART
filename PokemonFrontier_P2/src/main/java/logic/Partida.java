@@ -1,39 +1,82 @@
 package logic;
 
 /**
- * Aquesta classe serveix per guardar les dades bàsiques d'una partida 
- * Cada cop que algú comença a jugar, creem un "objecte" d'aquests.
- * 
+ * Aquesta classe serveix per guardar les dades basiques d'una partida.
+ * Cada cop que algu comenca a jugar, creem un "objecte" d'aquests.
+ *
  * @author dam1
  */
 public class Partida {
 
     // Declarem les dades que volem recordar de la partida
-    private String nom; // El nom que ha posat el jugador al menú
-    private String idioma; // Si ha triat Català o Castellà
-    private int nivell;     // El nivell on ha començat o on es troba
+    private String nomJugador1; // El nom que ha posat el jugador 1 al menu
+    private String nomJugador2; // El nom que ha posat el jugador 2 al menu
+    private String nickName1;
+    private String nickName2;
+    private String idioma; // Si ha triat Catala o Castella
+    private int nivell;     // El nivell on ha comencat o on es troba
 
     /**
-     * El "constructor": és el que fa servir el programa per fabricar 
-     * una partida nova amb tota la informació de cop.
-     * 
-     * @param nombre El nom del jugador
+     * El "constructor": es el que fa servir el programa per fabricar
+     * una partida nova amb tota la informacio de cop.
+     * @param nom1 El nom del jugador 1
+     * @param nick1 El nickname del jugador 1
+     * @param nom2 El nom del jugador 2
+     * @param nick2 El nickname del jugador 2
      * @param idioma L'idioma seleccionat
-     * @param nivel El nivell inicial
+     * @param nivell El nivell inicial
      */
-    public Partida(String nom, String idioma, int nivell) {
-        this.nom = nom; // Guardem el nom que ens passen a la nostra variable
-        this.idioma = idioma; // Guardem l'idioma
-        this.nivell = nivell;   // Guardem el nivell
+    public Partida(String nomJugador1, String nickName1, String nomJugador2, String nickName2, String idioma, int nivell) {
+        this.nomJugador1 = nomJugador1; 
+        this.nickName1 = nickName1;
+        this.nomJugador2 = nomJugador2; 
+        this.nickName2 = nickName2;
+        this.idioma = idioma; 
+        this.nivell = nivell;   
     }
 
     /**
-     * Aquest "getter" serveix per poder llegir el nom del jugador 
+     * Mètode "getter" serveix per poder llegir el nom del jugador 1
      * des d'altres classes sense poder modificar-lo per error.
-     * 
-     * @return El nom del jugador
+     *
+     * @return El nom del jugador 1
      */
-    public String getNom() {
-        return nom; // Simplement ens torna el nom guardat
+    public String getNomJugador1() {
+        return nomJugador1; // Simplement ens torna el nom guardat
     }
+
+    /**
+     * Mètode "getter" serveix per poder llegir el nom del jugador 2
+     * des d'altres classes sense poder modificar-lo per error.
+     * @return El nom del jugador 2
+     */
+    public String getNomJugador2() {
+        return nomJugador2; // Simplement ens torna el nom del segon jugador
+    }
+
+    /**
+     * Mètode "getter" serveix per poder llegir el nom del nickName del jugador1
+     * des d'altres classes sense poder modificar-lo per error.
+     * @return el nickName del jugador 1
+     */
+	public String getNickName1() {
+		return nickName1;
+	}
+
+
+	/**
+	 * Mètode "getter" serveix per poder llegir el nickName del jugador 2
+     * des d'altres classes sense poder modificar-lo per error.
+	 * @return el nickName del jugador 2
+	 */
+	public String getNickName2() {
+		return nickName2;
+	}
+
+
+	public int getNivell() {
+		return nivell;
+	}
+    
+    
 }
