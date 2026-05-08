@@ -1,76 +1,68 @@
 package logic.db;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
+import org.hibernate.query.Query;
 import logic.db.classes.Puntuaciones;
-import logic.db.classes.Usuarios;
+import logic.db.classes.Usuarios; // Entitat que guarda el nom
 
-/*
- * Clase on guardem les dades dels nostres usuaris. Guardem el nom , el seu ID, la puntuacio, l'idioma i la data.
- */
 public class PuntuacionsRepository {
 
-    private final HibernateUtil hibernate;
+    private final HibernateUtil hibernateUtil;
 
-    // El repositori necessita que li passis un HibernateUtil per funcionar
-    public PuntuacionsRepository(HibernateUtil hibernate) {
-        this.hibernate = hibernate;
+    public PuntuacionsRepository(HibernateUtil hibernateUtil) {
+        this.hibernateUtil = hibernateUtil;
     }
 
-    public void guardarPuntuacion(String nicknameJugador, long punts) {
+    /**
+     * Guarda la puntuació assegurant que l'usuari existeixi a la BD
+     */
+    public void guardarPuntuacio(Puntuaciones p, String nickName) {
+        Session session = hibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
-        // Ara fem servir la instància 'hibernate' que hem rebut al constructor
-        try (Session session = hibernate.getSessionFactory().openSession()) {
+        try {
             tx = session.beginTransaction();
 
-            Usuarios usuari = buscarUsuari(session, nicknameJugador);
-            if (usuari == null) {
-                usuari = new Usuarios();
-                usuari.setNombre(nicknameJugador);
-                session.save(usuari);
+            // Busquem l'usuari pel nom a la taula d'usuaris
+            Query<Usuarios> query = session.createQuery("FROM Usuarios WHERE nombre = :n", Usuarios.class);
+            query.setParameter("n", nickName);
+            Usuarios user = query.uniqueResult();
+
+            // Si no existeix l'usuari, el creem primer
+            if (user == null) {
+                user = new Usuarios();
+                user.setNombre(nickName);
+                session.save(user);
             }
 
-            Puntuaciones puntuacio = new Puntuaciones();
-            puntuacio.setUsuarios(usuari);
-            puntuacio.setPuntuacion(punts);
-            puntuacio.setFecha(new Timestamp(System.currentTimeMillis()));
-            puntuacio.setIdioma("Castellano");
-            session.save(puntuacio);
+            // Assignem l'usuari trobat/creat a l'objecte puntuació
+            p.setUsuarios(user);
+            
+            // Guardem la puntuació
+            session.save(p);
 
-            tx.commit();
+            tx.commit(); // CONFIRMA ELS CANVIS (Sense això surten NULLs o no es guarda)
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
+        } finally {
+            session.close();
         }
     }
 
-    private Usuarios buscarUsuari(Session session, String nicknameJugador) {
-        return session.createQuery("FROM Usuarios WHERE nombre = :nombre", Usuarios.class)
-                .setParameter("nombre", nicknameJugador)
-                .uniqueResult();
-    }
-
-    // Agafa les 10 millors puntuacions de la base de dades
-    public List<Puntuacio> obtenirTop10() {
-        List<Puntuacio> puntuacions = new ArrayList<>();
-        // CORRECCIÓ: Ara fem servir la instància 'hibernate' en lloc de la crida estàtica
-        try (Session session = hibernate.getSessionFactory().openSession()) {
-            List<Puntuaciones> resultats = session
-                    .createQuery("FROM Puntuaciones ORDER BY puntuacion DESC", Puntuaciones.class)
-                    .setMaxResults(10)
-                    .list();
-
-            for (Puntuaciones puntuacio : resultats) {
-                puntuacions.add(new Puntuacio(puntuacio.getUsuarios().getNombre(), puntuacio.getPuntuacion()));
-            }
-        } catch (final Exception e) {
-            // Si la DB falla, simplement no ensenya la taula
-        } 
-        return puntuacions;
+    /**
+     * Obté el rànquing de les 10 millors puntuacions
+     */
+    public List<Puntuaciones> obtenirTop10() {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // "JOIN FETCH" porta el nom de l'usuari directament per evitar NULLs a la llista
+            return session.createQuery("SELECT p FROM Puntuaciones p JOIN FETCH p.usuarios ORDER BY p.puntuacion DESC", Puntuaciones.class)
+                          .setMaxResults(10)
+                          .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

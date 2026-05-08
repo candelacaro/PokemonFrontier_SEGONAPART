@@ -26,12 +26,10 @@ import logic.Bola;
 import logic.GestorObstacles;
 import logic.Partida;
 import logic.Raqueta;
-import logic.db.DesarPuntuacions;
 import logic.db.HibernateUtil;
-import logic.db.Puntuacio;
 import logic.db.PuntuacionsRepository;
+import logic.db.classes.Puntuaciones;
 import logic.ConfigManager;
-
 
 /**
  * Classe VentanaJoc: Interfície gràfica i motor del joc. Implementa moviment
@@ -85,8 +83,6 @@ public class VentanaJoc extends JFrame {
 	private final GestorObstacles gestorObstacles = new GestorObstacles();
 	//Declaració d'objecte de la classe PuntuacionsRepository
 	private final PuntuacionsRepository puntuacionsRepository;
-	//Declaració d'objecte de la classe DesarPuntuacions
-	private final DesarPuntuacions desarPuntuacions;
 
 	/**
 	 * Mètode
@@ -98,7 +94,6 @@ public class VentanaJoc extends JFrame {
 		this.idioma = partida.getIdioma();
 
 		this.puntuacionsRepository = new PuntuacionsRepository(hibernate);
-		this.desarPuntuacions = new DesarPuntuacions(puntuacionsRepository);
 
 		recursos.carregarRecursos();
 
@@ -355,7 +350,15 @@ public class VentanaJoc extends JFrame {
 	        recursos.pararMusica();
 	        sonarMort();
 
-	        desarPuntuacions.guardarPuntuacionEquip(partida, getPunts());
+			// --- NOU: GUARDAR PUNTUACIÓ A LA BD ABANS DE MOSTRAR EL TOP 10 ---
+			try {
+				Puntuaciones novaPuntuacio = new Puntuaciones();
+				novaPuntuacio.setPuntuacion((int) getPunts());
+				// Guardem el nickname del Jugador 1
+				puntuacionsRepository.guardarPuntuacio(novaPuntuacio, partida.getNickName1());
+			} catch (Exception e) {
+				System.err.println("Error en desar la puntuació: " + e.getMessage());
+			}
 
 	        SwingUtilities.invokeLater(() -> {
 	            mostrarTop10();
@@ -375,13 +378,15 @@ public class VentanaJoc extends JFrame {
 
 		    config = new ConfigManager();
 
-		    List<Puntuacio> top = puntuacionsRepository.obtenirTop10();
+		    List<Puntuaciones> top = puntuacionsRepository.obtenirTop10();
 
 		    StringBuilder sb = new StringBuilder("TOP 10\n\n");
 
 	    int i = 1;
-	    for (Puntuacio p : top) {
-	        sb.append(String.format("%d. %-15s %d\n", i++, p.getNomJugador(), p.getPunts()));
+	    for (Puntuaciones p : top) {
+			// Es canvia p.getNomJugador() per p.getUsuarios().getNombre() per seguretat
+			String nomMostrat = (p.getUsuarios() != null) ? p.getUsuarios().getNombre() : "Anònim";
+	        sb.append(String.format("%d. %-15s %d\n", i++, nomMostrat, p.getPuntuacion()));
 	    }
 
 	    JTextArea area = new JTextArea(sb.toString());

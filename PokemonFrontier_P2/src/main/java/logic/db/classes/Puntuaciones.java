@@ -72,4 +72,9 @@ public class Puntuaciones implements java.io.Serializable {
 		this.idioma = idioma;
 	}
 
+	public Object getNomJugador() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
