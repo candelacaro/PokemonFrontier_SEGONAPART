@@ -367,13 +367,14 @@ public class VentanaJoc extends JFrame {
 	}
 
 	private void pararITornarAlMenu() {
-		if (temporitzadorJoc != null)
-			temporitzadorJoc.stop();
-		recursos.pararMusica();
-		new MenuInici().setVisible(true);
-		this.dispose();
-	}
+	    if (temporitzadorJoc != null)
+	        temporitzadorJoc.stop();
 
+	    recursos.pararMusica();
+
+	    new MenuInici().setVisible(true);
+	    this.dispose();
+	}
 	private void mostrarTop10() {
 
 		    config = new ConfigManager();

@@ -34,7 +34,12 @@ public class MenuInici extends JFrame {
     private final ConfigManager config = new ConfigManager();
     //Declaració i inicialització d'atribut privat final, afegim la instància d'Hibernate per passar-la a la finestra de joc
     private final HibernateUtil hibernate = new HibernateUtil();
-
+    private void cerrarMenu() {
+        if (musicaMenu != null) {
+            musicaMenu.stop();
+            musicaMenu.close();
+        }
+    }
     /**
      * Constructor per defecte que mostra tot el menú sencer
      */
@@ -175,6 +180,7 @@ public class MenuInici extends JFrame {
                 config.setIdioma(seleccion);
 
                 JOptionPane.showMessageDialog(this, config.t("Idioma guardat", "Idioma guardado"));
+                cerrarMenu(); 
 
                 this.dispose();
                 new MenuInici().setVisible(true);
