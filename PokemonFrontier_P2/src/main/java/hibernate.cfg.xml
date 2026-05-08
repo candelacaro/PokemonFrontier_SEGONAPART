@@ -3,7 +3,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.password">7022</property>  <!-- Canvi contrasenya per la vostra connexió -->
+        <property name="hibernate.connection.password">MedinasAndre</property>  <!-- Canvi contrasenya per la vostra connexió -->
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/retro_tennis_part2</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>

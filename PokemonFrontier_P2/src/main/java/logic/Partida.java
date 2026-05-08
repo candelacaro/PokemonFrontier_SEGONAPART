@@ -18,7 +18,8 @@ public class Partida implements Serializable {
     private String nomJugador2; // El nom que ha posat el jugador 2 al menu
     private String nickName1;
     private String nickName2;
-    private String idioma;// Si ha triat Catala o Castella
+ // Si ha triat Catala o Castella
+    private String idioma;
 
     public String getIdioma() {
         return idioma;

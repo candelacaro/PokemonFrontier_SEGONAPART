@@ -432,7 +432,7 @@ public class VentanaJoc extends JFrame {
 	    	        JOptionPane.QUESTION_MESSAGE,
 	    	        null,
 	    	        opciones,
-	    	        opciones[0]
+	    	        config.getColorPuntuacio()
 	    	);
 
 	        if (seleccion != null) {
