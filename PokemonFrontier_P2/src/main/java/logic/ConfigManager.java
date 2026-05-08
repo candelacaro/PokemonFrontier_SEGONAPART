@@ -92,4 +92,12 @@ public class ConfigManager {
 
         guardar();
     }
+    
+    public void setVolumen(String volumen) {
+
+        props.setProperty("volumen", volumen);
+
+        guardar();
+    }
 }
+

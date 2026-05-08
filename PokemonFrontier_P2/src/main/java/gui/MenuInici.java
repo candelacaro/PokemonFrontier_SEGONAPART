@@ -83,6 +83,7 @@ public class MenuInici extends JFrame {
         JButton btnJugar = crearBotoEstilitzat("JUGAR", new Color(46, 204, 113)); // Boto verd
         JButton btnContinuar = crearBotoEstilitzat("CONTINUAR", new Color(241, 196, 15)); // Boto groc
         JButton btnRegles = crearBotoEstilitzat("REGLAS", new Color(52, 152, 219)); // Boto blau
+        JButton btnVolumen = crearBotoEstilitzat("VOLUMEN", new Color(155, 89, 182));	
         JButton btnSortir = crearBotoEstilitzat("SALIR", new Color(231, 76, 60)); // Boto vermell
 
         // Programem que passa quan cliquem a JUGAR
@@ -102,7 +103,57 @@ public class MenuInici extends JFrame {
             reproduirSo("/Sound/menuClick.wav"); // So de clic
             mostrarRegles(); // Ensenyem la finestra amb les instruccions
         });
+        btnVolumen.addActionListener(e -> {
 
+            reproduirSo("/Sound/menuClick.wav");
+
+            String[] opciones = {
+                "0",
+                "25",
+                "50",
+                "75",
+                "100"
+            };
+
+            String seleccion = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Selecciona volumen:",
+                    "Configuración",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opciones,
+                    String.valueOf(config.getVolumen())
+            );
+
+            if (seleccion != null) {
+
+                config.setVolumen(seleccion);
+
+                // aplicar volumen inmediatamente
+                if (musicaMenu != null) {
+
+                    FloatControl gainControl =
+                            (FloatControl) musicaMenu.getControl(FloatControl.Type.MASTER_GAIN);
+
+                    int volumen = Integer.parseInt(seleccion);
+
+                    if (volumen == 0) {
+
+                        gainControl.setValue(gainControl.getMinimum());
+
+                    } else {
+
+                        float db = (float) (Math.log(volumen / 100.0)
+                                / Math.log(10.0) * 20.0);
+
+                        gainControl.setValue(db);
+                    }
+                }
+
+                JOptionPane.showMessageDialog(this,
+                        "Volumen guardado: " + seleccion);
+            }
+        });
         // Programem el boto de sortir
         btnSortir.addActionListener(e -> System.exit(0)); // Tanquem el programa del tot
 
@@ -115,6 +166,10 @@ public class MenuInici extends JFrame {
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
         panellPrincipal.add(btnRegles);
         panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        panellPrincipal.add(btnVolumen);
+        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+
         panellPrincipal.add(btnSortir);
 
         this.setContentPane(panellPrincipal); // Posem el panell a la finestra
@@ -299,6 +354,19 @@ public class MenuInici extends JFrame {
                 musicaMenu = AudioSystem.getClip();
                 //Amb el mètode .open() obrim ais
                 musicaMenu.open(ais);
+                FloatControl gainControl =
+                        (FloatControl) musicaMenu.getControl(FloatControl.Type.MASTER_GAIN);
+
+                int volumen = config.getVolumen();
+
+                if (volumen == 0) {
+                    gainControl.setValue(gainControl.getMinimum());
+                } else {
+
+                    float db = (float) (Math.log(volumen / 100.0) / Math.log(10.0) * 20.0);
+
+                    gainControl.setValue(db);
+                }
                 //Reproduim la música infinitament
                 musicaMenu.loop(Clip.LOOP_CONTINUOUSLY);
                 //Inicialitzem la musica del menú
