@@ -15,6 +15,8 @@ public class GestorObstacles {
     private static final int MIDA_OBSTACLE = 40; // Amplada i altura de cada obstacle
     private static final int INICI_ZONA_OBSTACLES = ALTURA_PANTALLA / 3; // Comenca el segon tros de la pantalla
     private static final int ALTURA_ZONA_OBSTACLES = ALTURA_PANTALLA / 3; // El segon tros es la zona dels obstacles
+    private static final int AJUST_POSICIO = 5; // Ajust de posicion de la caixa
+    private static final int DIMENSIONS_IMPACTE = 30; // DImensions dela area d'impacte de la pilota
 
     private final Rectangle[] llistaObstacles; // Una llista per guardar 12 rectangles invisibles
     private final boolean[] visible; // Per saber si l'obstacle encara hi és o l'hem trencat
@@ -38,7 +40,7 @@ public class GestorObstacles {
     public boolean comprovarXoc(final Rectangle pilota) {
         for (int i = 0; i < TOTAL_OBSTACLES; i++) { // Mirem tots els obstacles
             if (visible[i]) { // Si l'obstacle encara no l'hem trencat
-                Rectangle hitbox = new Rectangle(llistaObstacles[i].x + 5, llistaObstacles[i].y + 5, 30, 30); // Lloc del xoc
+                Rectangle hitbox = new Rectangle(llistaObstacles[i].x + AJUST_POSICIO, llistaObstacles[i].y + AJUST_POSICIO, DIMENSIONS_IMPACTE, DIMENSIONS_IMPACTE); // Lloc del xoc
                 if (pilota.intersects(hitbox)) { // Si la pilota toca l'obstacle
                 	// L'obstacle desapareix
                     visible[i] = false;

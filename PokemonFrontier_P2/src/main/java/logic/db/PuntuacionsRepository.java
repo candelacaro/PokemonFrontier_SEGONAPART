@@ -12,6 +12,9 @@ public class PuntuacionsRepository {
     // Objecte utilitzat per gestionar la connexió amb Hibernate
     private final HibernateUtil hibernateUtil;
 
+    // Declaració i incialització dels deu millors puntuacions
+    private static final int LIMITACIO_DELS_DEU_MILLORS = 10;
+    
     // Constructor que rep la configuració Hibernate
     public PuntuacionsRepository(HibernateUtil hibernateUtil) {
         this.hibernateUtil = hibernateUtil;
@@ -100,7 +103,7 @@ public class PuntuacionsRepository {
             )
 
             // Limitem el resultat a 10 puntuacions
-            .setMaxResults(10)
+            .setMaxResults(LIMITACIO_DELS_DEU_MILLORS)
 
             // Executem la consulta
             .list();

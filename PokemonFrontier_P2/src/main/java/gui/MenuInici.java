@@ -33,6 +33,49 @@ public class MenuInici extends JFrame {
     private final ConfigManager config = new ConfigManager();
     //Declaració i inicialització d'atribut privat final, afegim la instància d'Hibernate per passar-la a la finestra de joc
     private final HibernateUtil hibernate = new HibernateUtil();
+    
+    // Calculs
+    private static final double PERCENTATGE_VOLUM = 100.0, BASE_DEL_LOGARITME = 10.0, ESCALA_DECIBELS = 20.0;
+    private static final int VOLUM_CERO = 0;
+    
+    // Declaració i incialització de les opcion de volum
+    private static final String VOLUM_APAGAT = "0", VOLUM_BAIX = "25", VOLUM_MITJA = "50", VOLUM_MIG_ALT = "75", VOLUM_MAXIM = "100";
+    
+    // Declaració i incialització de les traduccions
+    private static final String LLENGUATGE_CASTELLA = "Castellano", LLENGUATGE_CATALA = "Catala";
+    private static final String MISSATGE_VOLUM = "Volumen inicial: ", MISSATGE_IDIOMA = "Idioma inicial: ";
+    private static final String SELECCIO_VOLUMEN = "Selecciona volumen: ";
+    private static final String CONFIGURACIO_CATALA = "Configuració", CONFIGURACIO_CASTELLA = "Configuración";
+    private static final String VOLUMEN_GUARDAT_CATALA = "Volum guardat: ", VOLUMEN_GUARDAT_CASTELLA = "Volumen guardado: ";
+    private static final String SELECCIO_IDIOMA = "Selecciona idioma: ";
+    private static final String IDIOMA_SELECCIONAT = "Idioma";
+    private static final String IDIOMA_GUARDAT_CASTELLA = "Idioma guardado", IDIOMA_GUARDAT_CATALA = "Idioma guardat";
+    private static final String SELECCIO_NIVELL_CATALA = "Selecciona nivell: ", SELECCIO_NIVELL_CASTELLA = "Selecciona nivel: ";
+    private static final String NIVELL_INICIAL_CATALA = "Nivell incial", NIVELL_INICIAL_CASTELLA = "Nivel inicial";
+    
+    // Declaració i inicialització de les opcions del menú
+    private static final String OPCIO_JUGAR_CASTELLA = "JUGAR", OPCIO_CONTINUAR_CASTELLA = "CONTINUAR", OPCIO_REGLES_CASTELLA = "REGLAS", OPCIO_IDOMA = "IDIOMA", OPCIO_VOLUMEN = "VOLUMEN", OPCIO_SORTIR_CASTELLA = "SALIR";
+    private static final String OPCIO_JUGAR_CATALA = "JUGAR", OPCIO_CONTINUAR_CATALA = "CONTINUAR", OPCIO_REGLES_CATALA = "REGLES", OPCIO_SORTIR_CATALA = "SORTIR";
+    
+    // Declaració i incialització dels jugadors
+    private static final String NOM_PRIMER_JUGADOR_CATALA = "Nom Jugador 1:", NOM_PRIMER_JUGADOR_CASTELLA = "Nombre Jugador 1: ";
+    private static final String NICKNAME_PRIMER_JUGADOR = "Nickname Jugador 1: ", NICKNAME_SEGON_JUGADOR = "Nickname Jugador 2: ";
+    private static final String NOM_SEGON_JUGADOR_CATALA = "Nom Jugador 2:", NOM_SEGON_JUGADOR_CASTELLA = "Nombre Jugador 2: ";
+    
+    // Declaració i incialització de posicions
+    private static final int AMPLE = 0;
+    private static final int ALTURA = 15;
+    private static final int VORES = 50;
+    private static final int MARGE_INTERN = 10;
+    
+    // Declarció i incialització de la tipografia
+    private static final String TIPOGRAFIA_FONT = "Arial";
+    private static final int TAMANY_FONT = 26;
+    private static final int FONT = 14;
+    
+    // Declaració i incialització del titol del menu
+    private static final String TITOL_JOC = "Pokemon Frontier - Main Menu";
+    
     private void cerrarMenu() {
         if (musicaMenu != null) {
             musicaMenu.stop();
@@ -48,11 +91,11 @@ public class MenuInici extends JFrame {
         inicialitzarComponents();
 
         //Mostra de les properties que hi han *** (No es final no sabem si ha de ser així)
-        System.out.println("Idioma inicial: " + config.getIdioma());
-        System.out.println("Volumen inicial: " + config.getVolumen());
+        System.out.println(MISSATGE_IDIOMA + config.getIdioma());
+        System.out.println(MISSATGE_VOLUM + config.getVolumen());
 
         //Posem un títol al menú
-        this.setTitle("Pokemon Frontier - Main Menu");
+        this.setTitle(TITOL_JOC);
         //Fem que no es pugui fer més gran la pantalla
         this.setResizable(false);
         //Posicionem la finestra
@@ -69,7 +112,7 @@ public class MenuInici extends JFrame {
      */
     private String t(String Catala, String Castellano) {
     		//Si escull Castellano retornem Castellano si no Català
-        return config.getIdioma().equals("Castellano") ? Castellano : Catala;
+        return config.getIdioma().equals(LLENGUATGE_CASTELLA) ? Castellano : Catala;
     }
     
     /**
@@ -83,24 +126,24 @@ public class MenuInici extends JFrame {
         //Posem els elements un sota l'altre
         panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); 
         //Donem una mica de marge als costats
-        panellPrincipal.setBorder(new EmptyBorder(50, 50, 50, 50)); 
+        panellPrincipal.setBorder(new EmptyBorder(VORES, VORES, VORES, VORES)); 
 
         //El titol del joc ben gran
         JLabel titol = new JLabel("POKEMON FRONTIER");
         //Lletra blanca
         titol.setForeground(Color.WHITE); 
         //Lletra Arial, negreta i tamany 26
-        titol.setFont(new Font("Arial", Font.BOLD, 26)); 
+        titol.setFont(new Font(TIPOGRAFIA_FONT, Font.BOLD, TAMANY_FONT)); 
         //Centrem el text
         titol.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
-        // Creem els botons
-        JButton btnJugar = crearBotoEstilitzat(t("JUGAR", "JUGAR"), new Color(46, 204, 113));
-        JButton btnContinuar = crearBotoEstilitzat(t("CONTINUAR", "CONTINUAR"), new Color(241, 196, 15));
-        JButton btnRegles = crearBotoEstilitzat(t("REGLES", "REGLAS"), new Color(52, 152, 219));
-        JButton btnIdioma = crearBotoEstilitzat("IDIOMA", new Color(52, 152, 219));
-        JButton btnVolumen = crearBotoEstilitzat("VOLUMEN", new Color(155, 89, 182));
-        JButton btnSortir = crearBotoEstilitzat(t("SORTIR", "SALIR"), new Color(231, 76, 60));
+        // Creem els botons utilitzant el fortmat RGB
+        JButton btnJugar = crearBotoEstilitzat(t(OPCIO_JUGAR_CATALA, OPCIO_JUGAR_CASTELLA), new Color(46, 204, 113));
+        JButton btnContinuar = crearBotoEstilitzat(t(OPCIO_CONTINUAR_CATALA, OPCIO_CONTINUAR_CASTELLA), new Color(241, 196, 15));
+        JButton btnRegles = crearBotoEstilitzat(t(OPCIO_REGLES_CATALA, OPCIO_REGLES_CASTELLA), new Color(52, 152, 219));
+        JButton btnIdioma = crearBotoEstilitzat(OPCIO_IDOMA, new Color(52, 152, 219));
+        JButton btnVolumen = crearBotoEstilitzat(OPCIO_VOLUMEN, new Color(155, 89, 182));
+        JButton btnSortir = crearBotoEstilitzat(t(OPCIO_SORTIR_CATALA, OPCIO_SORTIR_CASTELLA), new Color(231, 76, 60));
         // Programem que passa quan cliquem a JUGAR
         btnJugar.addActionListener(e -> {
             reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
@@ -125,19 +168,13 @@ public class MenuInici extends JFrame {
             reproduirSo("/Sound/menuClick.wav");// So de clic
 
             //Mostrem les possibles opcions
-            String[] opciones = {
-                "0", //Finals
-                "25",
-                "50",
-                "75",
-                "100"
-            };
+            String[] opciones = {VOLUM_APAGAT, VOLUM_BAIX,VOLUM_MITJA,VOLUM_MIG_ALT,VOLUM_MAXIM};
 
             //Mostrem el missatge en un panell
             String seleccion = (String) JOptionPane.showInputDialog(
                     this,
-                    config.t("Selecciona volumen:", "Selecciona volumen:"),
-                    config.t("Configuració", "Configuración"),
+                    config.t(SELECCIO_VOLUMEN, SELECCIO_VOLUMEN),
+                    config.t(CONFIGURACIO_CATALA, CONFIGURACIO_CASTELLA),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     opciones,
@@ -162,14 +199,14 @@ public class MenuInici extends JFrame {
                     int volumen = Integer.parseInt(seleccion);
 
                     //Si el volum és igual a 0 s'executa
-                    if (volumen == 0) {
+                    if (volumen == VOLUM_CERO) {
                     		//Control de la modificació del volum al mínim
                         gainControl.setValue(gainControl.getMinimum());
 
                     } else {
                     		//Declaració i inicialització de float que calcula el nivell de volum o ganancia en decibelis 
-                        float db = (float) (Math.log(volumen / 100.0)
-                                / Math.log(10.0) * 20.0);
+                        float db = (float) (Math.log(volumen / PERCENTATGE_VOLUM)
+                                / Math.log(BASE_DEL_LOGARITME) * ESCALA_DECIBELS);
                         
                         //Modifiquem el valor amb el mètode setValue
                         gainControl.setValue(db);
@@ -178,7 +215,7 @@ public class MenuInici extends JFrame {
 
                 //Panell que et mostra el missatge i la selecció
                 JOptionPane.showMessageDialog(this,
-                        config.t("Volum guardat: ", "Volumen guardado:") + seleccion);
+                        config.t(VOLUMEN_GUARDAT_CATALA, VOLUMEN_GUARDAT_CASTELLA) + seleccion);
             }
         });
         
@@ -188,13 +225,13 @@ public class MenuInici extends JFrame {
             reproduirSo("/Sound/menuClick.wav");
             
             //Declaració i inicialització d'Array de String
-            String[] idiomes = {"Catala", "Castellano"};
+            String[] idiomes = {LLENGUATGE_CATALA, LLENGUATGE_CASTELLA};
             
             //Declaració i inicialització  de variable per mostrar el panell fent casting
             String seleccion = (String) JOptionPane.showInputDialog(
                     this,
-                    config.t("Selecciona idioma:", "Selecciona idioma:"),
-                    config.t("Idioma", "Idioma"),
+                    config.t(SELECCIO_IDIOMA, SELECCIO_IDIOMA),
+                    config.t(IDIOMA_SELECCIONAT, IDIOMA_SELECCIONAT),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     idiomes,
@@ -207,7 +244,7 @@ public class MenuInici extends JFrame {
                 config.setIdioma(seleccion);
 
                 //Panell que et mostra el missatge
-                JOptionPane.showMessageDialog(this, config.t("Idioma guardat", "Idioma guardado"));
+                JOptionPane.showMessageDialog(this, config.t(IDIOMA_GUARDAT_CATALA, IDIOMA_GUARDAT_CASTELLA));
                 cerrarMenu(); 
                 
                 //Alliberem recursos natius de la finestra
@@ -221,19 +258,19 @@ public class MenuInici extends JFrame {
 
         // Anem afegint els elements al panell amb espais entremig
         panellPrincipal.add(btnJugar);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+        panellPrincipal.add(Box.createRigidArea(new Dimension(AMPLE, ALTURA)));
 
         panellPrincipal.add(btnContinuar);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+        panellPrincipal.add(Box.createRigidArea(new Dimension(AMPLE, ALTURA)));
 
         panellPrincipal.add(btnRegles);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+        panellPrincipal.add(Box.createRigidArea(new Dimension(AMPLE, ALTURA)));
 
         panellPrincipal.add(btnIdioma); 
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+        panellPrincipal.add(Box.createRigidArea(new Dimension(AMPLE, ALTURA)));
 
         panellPrincipal.add(btnVolumen);
-        panellPrincipal.add(Box.createRigidArea(new Dimension(0, 15)));
+        panellPrincipal.add(Box.createRigidArea(new Dimension(AMPLE, ALTURA)));
 
         panellPrincipal.add(btnSortir);
 
@@ -256,9 +293,9 @@ public class MenuInici extends JFrame {
         boto.setFocusPainted(false); // Treiem el quadrat que surt al text quan cliques
         boto.setBackground(colorFons); // Posem el color de fons triat
         boto.setForeground(Color.WHITE); // Text blanc
-        boto.setFont(new Font("Arial", Font.BOLD, 14)); // Lletra negreta
+        boto.setFont(new Font(TIPOGRAFIA_FONT, Font.BOLD, FONT)); // Lletra negreta
         boto.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Fa que surti la maneta en passar el ratolí
-        boto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Marge intern
+        boto.setBorder(BorderFactory.createEmptyBorder(MARGE_INTERN, MARGE_INTERN, MARGE_INTERN, MARGE_INTERN)); // Marge intern
         return boto;
     }
 
@@ -274,14 +311,14 @@ public class MenuInici extends JFrame {
 
         // Declaració i inicialització de varible que demana dades del Jugador 1
         String nom1 = JOptionPane.showInputDialog(this,
-        	    (idiomaTriat.equals("Catala") ? "Nom Jugador 1:" : "Nombre Jugador 1:")
+        	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NOM_PRIMER_JUGADOR_CATALA : NOM_PRIMER_JUGADOR_CASTELLA)
         	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nom1 == null || nom1.trim().isEmpty()) {
         		return;
         }
         //Declaració i inicialització de varible que demana dades del nickname 1
         String nick1 = JOptionPane.showInputDialog(this,
-        	    (idiomaTriat.equals("Catala") ? "Nickname Jugador 1:" : "Nickname Jugador 1:")
+        	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NICKNAME_PRIMER_JUGADOR : NICKNAME_PRIMER_JUGADOR)
         	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nick1 == null || nick1.trim().isEmpty()) {
         		return;
@@ -289,7 +326,7 @@ public class MenuInici extends JFrame {
 
         // Declaració i inicialització de varible que demana dades del Jugador 2
         String nom2 = JOptionPane.showInputDialog(this,
-        	    (idiomaTriat.equals("Catala") ? "Nom Jugador 2:" : "Nombre Jugador 2:")
+        	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NOM_SEGON_JUGADOR_CATALA : NOM_SEGON_JUGADOR_CASTELLA)
         	);
         //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nom2 == null || nom2.trim().isEmpty()) {
@@ -297,7 +334,7 @@ public class MenuInici extends JFrame {
         }
         //Declaració i inicialització de varible que demana dades del nickname 2
         String nick2 = JOptionPane.showInputDialog(this,
-        	    (idiomaTriat.equals("Catala") ? "Nickname Jugador 2:" : "Nickname Jugador 2:")
+        	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NICKNAME_SEGON_JUGADOR : NICKNAME_SEGON_JUGADOR)
         	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nick2 == null || nick2.trim().isEmpty()) {
         		return;
@@ -345,8 +382,8 @@ public class MenuInici extends JFrame {
         //Declaració i inicialització de variable per mostrar el panell fent casting
         String seleccion = (String) JOptionPane.showInputDialog(
                 this,
-                (idiomaTriat.equals("Catala") ? "Selecciona nivell:" : "Selecciona nivel:"),
-                (idiomaTriat.equals("Catala") ? "Nivell inicial" : "Nivel inicial"),
+                (idiomaTriat.equals(LLENGUATGE_CATALA) ? SELECCIO_NIVELL_CATALA : SELECCIO_NIVELL_CASTELLA),
+                (idiomaTriat.equals(LLENGUATGE_CATALA) ? NIVELL_INICIAL_CATALA : NIVELL_INICIAL_CASTELLA),
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 nivells,
@@ -495,8 +532,8 @@ public class MenuInici extends JFrame {
 
                 } else {
                 		//Declaració i inicialització de float que calcula el nivell de volum o ganancia en decibelis 
-                    float db = (float) (Math.log(volumen / 100.0)
-                            / Math.log(10.0) * 20.0);
+                    float db = (float) (Math.log(volumen / PERCENTATGE_VOLUM)
+                            / Math.log(BASE_DEL_LOGARITME) * ESCALA_DECIBELS);
                     
                     //Modifiquem el valor amb el mètode setValue
                     gainControl.setValue(db);

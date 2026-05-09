@@ -15,6 +15,12 @@ public class ConfigManager {
     // Objecte que emmagatzema les propietats del joc
     private Properties props = new Properties();
 
+    // Declaració i incialització dels text traduits per defecte
+    private static final String IDIOMA = "idioma", LLENGUATGE_PER_DEFECTE = "Catala", LLENGUATGE_CASTELLA = "Castellano";
+    private static final String COLOR = "colorPuntuacio", COLOR_PER_DEFECTE = "WHITE";
+    private static final String VOLUM = "volumen", VOLUM_PER_DEFECTE = "70";
+    private static final String ERROR_CARREGAR = "Error cargando config.properties", CONFIGUARCIO = "Configuracion del juego", ERROR_GUARDAR = "Error guardando config.properties";
+    
     /**
      * Constructor per defecte.
      * Carrega la configuració en iniciar el joc.
@@ -37,13 +43,13 @@ public class ConfigManager {
         if (!archivo.exists()) {
 
         	// Idioma per defecte
-        	props.setProperty("idioma", "Catala");
+        	props.setProperty(IDIOMA, LLENGUATGE_PER_DEFECTE);
 
         	// Color de puntuació per defecte
-            props.setProperty("colorPuntuacio", "WHITE");
+            props.setProperty(COLOR, COLOR_PER_DEFECTE);
 
             // Volum per defecte
-            props.setProperty("volumen", "70");
+            props.setProperty(VOLUM, VOLUM_PER_DEFECTE);
 
             // Guardem la configuració inicial
             guardar();
@@ -57,7 +63,7 @@ public class ConfigManager {
         } catch (IOException e) {
 
         	// Mostrem error si no es pot carregar
-            System.out.println("Error cargando config.properties");
+            System.out.println(ERROR_CARREGAR);
             e.printStackTrace();
         }
     }
@@ -70,35 +76,35 @@ public class ConfigManager {
         try (OutputStream out = new FileOutputStream(CONFIG_FILE)) {
 
         	// Desa totes les propietats al fitxer
-            props.store(out, "Configuracion del juego");
+            props.store(out, CONFIGUARCIO);
 
         } catch (IOException e) {
 
         	// Mostrem error si falla el guardat
-            System.out.println("Error guardando config.properties");
+            System.out.println(ERROR_GUARDAR);
             e.printStackTrace();
         }
     }
 
     // Retorna l'idioma seleccionat
     public String getIdioma() {
-        return props.getProperty("idioma");
+        return props.getProperty(IDIOMA);
     }
 
     // Retorna el color de la puntuació
     public String getColorPuntuacio() {
-        return props.getProperty("colorPuntuacio");
+        return props.getProperty(COLOR);
     }
 
     // Retorna el volum convertit a enter
     public int getVolumen() {
-        return Integer.parseInt(props.getProperty("volumen"));
+        return Integer.parseInt(props.getProperty(VOLUM));
     }
 
     // Modifica el color de la puntuació
     public void setColorPuntuacio(String color) {
 
-        props.setProperty("colorPuntuacio", color);
+        props.setProperty(COLOR, color);
 
         // Guarda els canvis
         guardar();
@@ -107,7 +113,7 @@ public class ConfigManager {
     // Modifica el volum
     public void setVolumen(String volumen) {
 
-        props.setProperty("volumen", volumen);
+        props.setProperty(VOLUM, volumen);
 
         // Guarda els canvis
         guardar();
@@ -116,7 +122,7 @@ public class ConfigManager {
     // Modifica l'idioma
     public void setIdioma(String idioma) {
 
-        props.setProperty("idioma", idioma);
+        props.setProperty(IDIOMA, idioma);
 
         // Guarda els canvis
         guardar();
@@ -129,7 +135,7 @@ public class ConfigManager {
 
     	// Si l'idioma és castellà retorna el text en castellà,
     	// si no, retorna el text en català
-        return "Castellano".equals(getIdioma()) ? Castellano : Catala;
+        return LLENGUATGE_CASTELLA.equals(getIdioma()) ? Castellano : Catala;
     }
 }
 

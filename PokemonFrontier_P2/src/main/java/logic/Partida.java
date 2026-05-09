@@ -16,8 +16,8 @@ public class Partida implements Serializable {
     // Declarem les dades que volem recordar de la partida
     private String nomJugador1; // El nom que ha posat el jugador 1 al menu
     private String nomJugador2; // El nom que ha posat el jugador 2 al menu
-    private String nickName1;
-    private String nickName2;
+    private String nickName1; // El nom que ha posat el jugador 1 al menu
+    private String nickName2; // El nom que ha posat el jugador 2 al menu
  // Si ha triat Catala o Castella
     private String idioma;
 
@@ -30,6 +30,7 @@ public class Partida implements Serializable {
     }
     private int nivell;     // El nivell on ha comencat o on es troba
     private long punts; // Els punts que portava la partida quan es va guardar
+    private static final int PUNTUACIO_DE_INICI = 0; // Puntuacio de inici dels jugadors
 
     /**
      * El "constructor": es el que fa servir el programa per fabricar
@@ -48,7 +49,7 @@ public class Partida implements Serializable {
         this.nickName2 = nickName2;
         this.idioma = idioma; 
         this.nivell = nivell;
-        this.punts = 0;
+        this.punts = PUNTUACIO_DE_INICI;
     }
 
     /**

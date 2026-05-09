@@ -14,6 +14,9 @@ public class Bola {
     private double velX; // Quants píxels es mou de costat en cada pas
     private double velY; // Quants píxels puja o baixa
     private boolean activa; // Ens diu si la pilota encara està jugant
+    
+    private static final int DIMENSIONS_BOLA = 30; // Dimensions de la bola
+    private static final double INCREMENT_VELOCITAT_BOLA = 1.10; // Increment de la velocitat de bola
 
     /**
      * Constructor per defecte
@@ -44,8 +47,8 @@ public class Bola {
      * @param velocitatMaxima
      */
     public void augmentarVelocitat(final double velocitatMaxima) {
-        velX = Math.min(velX * 1.10, velocitatMaxima);
-        velY = Math.min(velY * 1.10, velocitatMaxima);
+        velX = Math.min(velX * INCREMENT_VELOCITAT_BOLA, velocitatMaxima);
+        velY = Math.min(velY * INCREMENT_VELOCITAT_BOLA, velocitatMaxima);
     }
 
     /**
@@ -53,7 +56,7 @@ public class Bola {
      * @return el rectangle
      */
     public Rectangle getRectangle() {
-        return new Rectangle((int) x, (int) y, 30, 30);
+        return new Rectangle((int) x, (int) y, DIMENSIONS_BOLA, DIMENSIONS_BOLA);
     }
 
     /**
