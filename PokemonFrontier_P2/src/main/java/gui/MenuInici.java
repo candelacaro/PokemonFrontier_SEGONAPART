@@ -6,7 +6,6 @@ import java.awt.*;
 import javax.sound.sampled.*;
 import java.net.URL;
 import java.io.*;
-
 import logic.ConfigManager;
 import logic.Partida;
 import logic.db.HibernateUtil;
@@ -34,54 +33,91 @@ public class MenuInici extends JFrame {
     //Declaració i inicialització d'atribut privat final, afegim la instància d'Hibernate per passar-la a la finestra de joc
     private final HibernateUtil hibernate = new HibernateUtil();
     
-    // Calculs
-    private static final double PERCENTATGE_VOLUM = 100.0, BASE_DEL_LOGARITME = 10.0, ESCALA_DECIBELS = 20.0;
+    // Declaració i inicialització de finals per als càlculs del control del volum
+    private static final double PERCENTATGE_VOLUM = 100.0; 
+    private static final double BASE_DEL_LOGARITME = 10.0; 
+    private static final double ESCALA_DECIBELS = 20.0;
     private static final int VOLUM_CERO = 0;
     
-    // Declaració i incialització de les opcion de volum
-    private static final String VOLUM_APAGAT = "0", VOLUM_BAIX = "25", VOLUM_MITJA = "50", VOLUM_MIG_ALT = "75", VOLUM_MAXIM = "100";
+    // Declaració i incialització de finals per les opcions de volum
+    private static final String VOLUM_APAGAT = "0"; 
+    private static final String VOLUM_BAIX = "25";
+    private static final String VOLUM_MITJA = "50"; 
+    private static final String VOLUM_MIG_ALT = "75";
+    private static final String VOLUM_MAXIM = "100";
     
-    // Declaració i incialització de les traduccions
-    private static final String LLENGUATGE_CASTELLA = "Castellano", LLENGUATGE_CATALA = "Catala";
-    private static final String MISSATGE_VOLUM = "Volumen inicial: ", MISSATGE_IDIOMA = "Idioma inicial: ";
+    // Declaració i inicialització de finals per les traduccions
+    private static final String LLENGUATGE_CASTELLA = "Castellano";
+    private static final String LLENGUATGE_CATALA = "Catala";
+    private static final String MISSATGE_VOLUM = "Volumen inicial: "; 
+    private static final String MISSATGE_IDIOMA = "Idioma inicial: ";
     private static final String SELECCIO_VOLUMEN = "Selecciona volumen: ";
-    private static final String CONFIGURACIO_CATALA = "Configuració", CONFIGURACIO_CASTELLA = "Configuración";
-    private static final String VOLUMEN_GUARDAT_CATALA = "Volum guardat: ", VOLUMEN_GUARDAT_CASTELLA = "Volumen guardado: ";
+    private static final String CONFIGURACIO_CATALA = "Configuració"; 
+    private static final String CONFIGURACIO_CASTELLA = "Configuración";
+    private static final String VOLUMEN_GUARDAT_CATALA = "Volum guardat: ";
+    private static final String VOLUMEN_GUARDAT_CASTELLA = "Volumen guardado: ";
     private static final String SELECCIO_IDIOMA = "Selecciona idioma: ";
     private static final String IDIOMA_SELECCIONAT = "Idioma";
-    private static final String IDIOMA_GUARDAT_CASTELLA = "Idioma guardado", IDIOMA_GUARDAT_CATALA = "Idioma guardat";
-    private static final String SELECCIO_NIVELL_CATALA = "Selecciona nivell: ", SELECCIO_NIVELL_CASTELLA = "Selecciona nivel: ";
-    private static final String NIVELL_INICIAL_CATALA = "Nivell incial", NIVELL_INICIAL_CASTELLA = "Nivel inicial";
+    private static final String IDIOMA_GUARDAT_CASTELLA = "Idioma guardado"; 
+    private static final String IDIOMA_GUARDAT_CATALA = "Idioma guardat";
+    private static final String SELECCIO_NIVELL_CATALA = "Selecciona nivell: ";
+    private static final String SELECCIO_NIVELL_CASTELLA = "Selecciona nivel: ";
+    private static final String NIVELL_INICIAL_CATALA = "Nivell incial"; 
+    private static final String NIVELL_INICIAL_CASTELLA = "Nivel inicial";
     
-    // Declaració i inicialització de les opcions del menú
-    private static final String OPCIO_JUGAR_CASTELLA = "JUGAR", OPCIO_CONTINUAR_CASTELLA = "CONTINUAR", OPCIO_REGLES_CASTELLA = "REGLAS", OPCIO_IDOMA = "IDIOMA", OPCIO_VOLUMEN = "VOLUMEN", OPCIO_SORTIR_CASTELLA = "SALIR";
-    private static final String OPCIO_JUGAR_CATALA = "JUGAR", OPCIO_CONTINUAR_CATALA = "CONTINUAR", OPCIO_REGLES_CATALA = "REGLES", OPCIO_SORTIR_CATALA = "SORTIR";
+    // Declaració i inicialització de finals per les opcions del menú
+    private static final String OPCIO_JUGAR_CASTELLA = "JUGAR";
+    private static final String OPCIO_CONTINUAR_CASTELLA = "CONTINUAR";
+    private static final String OPCIO_REGLES_CASTELLA = "REGLAS";
+    private static final String OPCIO_IDOMA = "IDIOMA"; 
+    private static final String OPCIO_VOLUMEN = "VOLUMEN"; 
+    private static final String OPCIO_SORTIR_CASTELLA = "SALIR";
+    private static final String OPCIO_JUGAR_CATALA = "JUGAR"; 
+    private static final String OPCIO_CONTINUAR_CATALA = "CONTINUAR"; 
+    private static final String OPCIO_REGLES_CATALA = "REGLES"; 
+    private static final String OPCIO_SORTIR_CATALA = "SORTIR";
     
-    // Declaració i incialització dels jugadors
-    private static final String NOM_PRIMER_JUGADOR_CATALA = "Nom Jugador 1:", NOM_PRIMER_JUGADOR_CASTELLA = "Nombre Jugador 1: ";
-    private static final String NICKNAME_PRIMER_JUGADOR = "Nickname Jugador 1: ", NICKNAME_SEGON_JUGADOR = "Nickname Jugador 2: ";
-    private static final String NOM_SEGON_JUGADOR_CATALA = "Nom Jugador 2:", NOM_SEGON_JUGADOR_CASTELLA = "Nombre Jugador 2: ";
+    // Declaració i inicialització de finals per els jugadors
+    private static final String NOM_PRIMER_JUGADOR_CATALA = "Nom Jugador 1:";
+    private static final String NOM_PRIMER_JUGADOR_CASTELLA = "Nombre Jugador 1: ";
+    private static final String NICKNAME_PRIMER_JUGADOR = "Nickname Jugador 1: ";
+    private static final String NICKNAME_SEGON_JUGADOR = "Nickname Jugador 2: ";
+    private static final String NOM_SEGON_JUGADOR_CATALA = "Nom Jugador 2:";
+    private static final String NOM_SEGON_JUGADOR_CASTELLA = "Nombre Jugador 2: ";
     
-    // Declaració i incialització de posicions
+    // Declaració i inicialització de finals per les mides de la finestra
     private static final int AMPLE = 0;
     private static final int ALTURA = 15;
     private static final int VORES = 50;
     private static final int MARGE_INTERN = 10;
+    private static final int AMPLE_FINESTRA = 450;
+    private static final int ALÇADA_FINESTRA = 500;
+    private static final int AMPLE_BOTO = 200;
+    private static final int ALÇADA_BOTO = 50;
     
-    // Declarció i incialització de la tipografia
+    // Declarció i inicialització de finals per la tipografia
     private static final String TIPOGRAFIA_FONT = "Arial";
     private static final int TAMANY_FONT = 26;
     private static final int FONT = 14;
     
-    // Declaració i incialització del titol del menu
+    // Declaració i inicialització de final pel titol del menu
     private static final String TITOL_JOC = "Pokemon Frontier - Main Menu";
     
+    private static final int NIVELL_MAXIM = 20;
+    
+    /**
+     * Mètode per tancar el menú
+     */
     private void cerrarMenu() {
+    		//Estructura condicional que avalua si la musica del menu continua sonant
         if (musicaMenu != null) {
+        		//Aturem la musica amb un stop
             musicaMenu.stop();
+            //Tanquem la musica amb un close
             musicaMenu.close();
         }
     }
+    
     /**
      * Constructor per defecte que mostra tot el menú sencer
      */
@@ -90,7 +126,7 @@ public class MenuInici extends JFrame {
     		//Crida del mètode inicialitzarComponents(), per mostrar l'estètica del menú
         inicialitzarComponents();
 
-        //Mostra de les properties que hi han *** (No es final no sabem si ha de ser així)
+        //Mostra de les properties que hi han 
         System.out.println(MISSATGE_IDIOMA + config.getIdioma());
         System.out.println(MISSATGE_VOLUM + config.getVolumen());
 
@@ -111,19 +147,19 @@ public class MenuInici extends JFrame {
      * @return l'idioma triat
      */
     private String t(String Catala, String Castellano) {
-    		//Si escull Castellano retornem Castellano si no Català
+    		//Si escull Castellano retornem Castellano si no Català amb un operador ternari
         return config.getIdioma().equals(LLENGUATGE_CASTELLA) ? Castellano : Catala;
     }
     
     /**
-     * Mètode que configura tot el disseny visual del menu
+     * Mètode que configura tot el disseny visual del menú
      */
     private void inicialitzarComponents() {
     		//El contenidor on anira tot
         JPanel panellPrincipal = new JPanel(); 
         //Un color gris fosc de fons
         panellPrincipal.setBackground(new Color(45, 45, 45)); 
-        //Posem els elements un sota l'altre
+        //Posem els elements un sota l'altre i verticalment amb BoxLayout.Y_AXIS
         panellPrincipal.setLayout(new BoxLayout(panellPrincipal, BoxLayout.Y_AXIS)); 
         //Donem una mica de marge als costats
         panellPrincipal.setBorder(new EmptyBorder(VORES, VORES, VORES, VORES)); 
@@ -144,6 +180,7 @@ public class MenuInici extends JFrame {
         JButton btnIdioma = crearBotoEstilitzat(OPCIO_IDOMA, new Color(52, 152, 219));
         JButton btnVolumen = crearBotoEstilitzat(OPCIO_VOLUMEN, new Color(155, 89, 182));
         JButton btnSortir = crearBotoEstilitzat(t(OPCIO_SORTIR_CATALA, OPCIO_SORTIR_CASTELLA), new Color(231, 76, 60));
+        
         // Programem que passa quan cliquem a JUGAR
         btnJugar.addActionListener(e -> {
             reproduirSo("/Sound/menuClick.wav"); // Fem el soroll de clic
@@ -253,6 +290,7 @@ public class MenuInici extends JFrame {
                 new MenuInici().setVisible(true);
             }
         });
+        
         // Programem el boto de sortir
         btnSortir.addActionListener(e -> System.exit(0)); // Tanquem el programa del tot
 
@@ -277,7 +315,7 @@ public class MenuInici extends JFrame {
         this.setContentPane(panellPrincipal); // Posem el panell a la finestra
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // Si tanquem la X, s'acaba tot
         this.pack(); // Ajustem la finestra al contingut
-        this.setSize(450, 500); // Forcem una mida de 400x500
+        this.setSize(AMPLE_FINESTRA, ALÇADA_FINESTRA); // Forcem una mida de 450x500
     }
 
     /**
@@ -288,7 +326,7 @@ public class MenuInici extends JFrame {
      */
     private JButton crearBotoEstilitzat(String text, Color colorFons) {
         JButton boto = new JButton(text);
-        boto.setMaximumSize(new Dimension(200, 50)); // Mida màxima del botó
+        boto.setMaximumSize(new Dimension(AMPLE_BOTO, ALÇADA_BOTO)); // Mida màxima del botó
         boto.setAlignmentX(Component.CENTER_ALIGNMENT); // Ho centrem horitzontalment
         boto.setFocusPainted(false); // Treiem el quadrat que surt al text quan cliques
         boto.setBackground(colorFons); // Posem el color de fons triat
@@ -300,7 +338,7 @@ public class MenuInici extends JFrame {
     }
 
     /**
-     * Mètode que gestiona tota la logica abans de que la pilota comenci a moure's
+     * Mètode que gestiona tota la lògica abans de que la pilota comenci a moure's
      */
     private void accioBotoJugar() {
     		//Declaració i inicialització de variable que accedeix a l'idioma que hi ha a la classe configManager
@@ -312,14 +350,18 @@ public class MenuInici extends JFrame {
         // Declaració i inicialització de varible que demana dades del Jugador 1
         String nom1 = JOptionPane.showInputDialog(this,
         	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NOM_PRIMER_JUGADOR_CATALA : NOM_PRIMER_JUGADOR_CASTELLA)
-        	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        	); 
+        
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nom1 == null || nom1.trim().isEmpty()) {
         		return;
         }
+        
         //Declaració i inicialització de varible que demana dades del nickname 1
         String nick1 = JOptionPane.showInputDialog(this,
         	    (idiomaTriat.equals(LLENGUATGE_CATALA) ? NICKNAME_PRIMER_JUGADOR : NICKNAME_PRIMER_JUGADOR)
-        	);        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
+        	);        
+        //Estructura condicional on s'avalua si el nom es posa en blanc o es troba buit no retornem res
         if (nick1 == null || nick1.trim().isEmpty()) {
         		return;
         }
@@ -373,7 +415,7 @@ public class MenuInici extends JFrame {
      */
     private int seleccionarNivell(String idiomaTriat) {
     		//Declaració i inicialització d'Array de String amb els nivells disponibles
-        String[] nivells = new String[20];
+        String[] nivells = new String[NIVELL_MAXIM];
         //Bucle que omple els nivells de l'1 al 20
         for (int i = 0; i < nivells.length; i++) {
             nivells[i] = String.valueOf(i + 1);

@@ -32,6 +32,11 @@ public class RecursosJoc {
     private ImageIcon imgObstacle2; // Sera Hunter
     private ImageIcon imgObstacle3; // Sera Gengar
     private ImageIcon imgObstacle4; // Sera Megagengar
+    
+    //Declaració i inicialització de finals per el canvi de fons segon el nivell
+    private final int NIVELL_AMB_PRIMER_FONS = 4;
+    private final int NIVELL_AMB_SEGON_FONS = 9;
+    private final int NIVELL_AMB_TERCER_FONS = 14;
 
     /**
      * Mètode que carrega tots els fitxers de so i imatges
@@ -171,9 +176,9 @@ public class RecursosJoc {
      * @return, returna el fons que correspon al nivell
      */
     public ImageIcon getFonsActual(final int nivell) {
-        if (nivell <= 4) return imgFons; // Posem el fons del gimnas 1
-        if (nivell <= 9) return imgFons2; // Posem el fons del gimnas 2
-        if (nivell <= 14) return imgFons3; // Posem el fons del gimnas 3
+        if (nivell <= NIVELL_AMB_PRIMER_FONS) return imgFons; // Posem el fons del gimnas 1
+        if (nivell <= NIVELL_AMB_SEGON_FONS) return imgFons2; // Posem el fons del gimnas 2
+        if (nivell <= NIVELL_AMB_TERCER_FONS) return imgFons3; // Posem el fons del gimnas 3
         return imgFons4; // Posem el fons final
     }
 
@@ -183,10 +188,10 @@ public class RecursosJoc {
      * @return l'obstacle que correspongui al nivell
      */
     public ImageIcon getObstacleActual(final int nivell) {
-        if (nivell <= 4) {
+        if (nivell <= NIVELL_AMB_PRIMER_FONS) {
         	return imgObstacle; // gastly.png
         }
-        if (nivell <= 9) {
+        if (nivell <= NIVELL_AMB_SEGON_FONS) {
         	return imgObstacle2; // hunter.png
         }
         if (nivell <= 19) {
