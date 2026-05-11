@@ -6,14 +6,15 @@ import org.hibernate.cfg.Configuration;
 /**
  * Classe utilitària per gestionar Hibernate.
  * S'encarrega de crear i tancar la connexió amb la base de dades.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class HibernateUtil {
 
-    // Variable que guardarà la SessionFactory d'Hibernate
+    // Declaració i incialització de variable que guardarà la SessionFactory d'Hibernate
     private final SessionFactory sessionFactory;
 
     /**
-     * Constructor de la classe
+     * Constructor per defecte
      */
     public HibernateUtil() {
 

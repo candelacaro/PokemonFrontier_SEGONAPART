@@ -4,30 +4,35 @@ import java.awt.Rectangle;
 
 /**
  * Aquesta classe guarda la posicio i la mida de la raqueta.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class Raqueta {
 
-    // Amplada màxima de la finestra del joc
+    // Declaració i incialització de final per l'amplada màxima de la finestra del joc
     private static final int AMPLADA_FINESTRA = 500;
 
-    // Posició horitzontal de la raqueta
+    // Declaració i inicialització d'atribut per la posició horitzontal de la raqueta
     private int x;
 
-    // Posició vertical de la raqueta
+    // Declaració i incialització de final per la posició vertical de la raqueta
     private final int y;
 
-    // Amplada de la raqueta
+    // Declaració i incialització de final per l'amplada de la raqueta
     private final int ample;
 
-    // Altura de la raqueta
+    // Declaració i incialització de final per l'alçada de la raqueta
     private final int alt;
 
     /**
-     * Constructor de la raqueta.
+     * Constructor de la raqueta
+     * @param x, coordenada x
+     * @param y, coordenada y
+     * @param ample, amplada de la raqueta
+     * @param alt, alçada de la raqueta
      */
     public Raqueta(final int x, final int y, final int ample, final int alt) {
 
-    	// Guardem la posició vertical
+    		// Guardem la posició vertical
         this.y = y;
 
         // Guardem l'amplada
@@ -41,7 +46,7 @@ public class Raqueta {
     }
 
     /**
-     * Retorna el rectangle de col·lisió de la raqueta.
+     * Mètode Rectangle que retorna el rectangle de col·lisió de la raqueta.
      */
     public Rectangle getRectangle() {
 
@@ -49,13 +54,17 @@ public class Raqueta {
         return new Rectangle(x, y, ample, alt);
     }
 
-    // Retorna la posició X
+    /**
+     * Mètode getter que retorna la posició X
+     * @return x
+     */
     public int getX() {
         return x;
     }
 
     /**
-     * Modifica la posició X de la raqueta.
+     * Mètode setter que odifica la posició X de la raqueta.
+     * @param x, la coordenada x
      */
     public void setX(final int x) {
 
@@ -76,17 +85,26 @@ public class Raqueta {
         }
     }
 
-    // Retorna la posició Y
+    /**
+     * Mètode getter que retorna la posició Y
+     * @return y
+     */
     public int getY() {
         return y;
     }
 
-    // Retorna l'amplada de la raqueta
+    /**
+     * Mètode getter que retorna l'amplada de la raqueta
+     * @return ample
+     */
     public int getAmple() {
         return ample;
     }
 
-    // Retorna l'altura de la raqueta
+    /**
+     * Mètode getter que retorna l'altura de la raqueta
+     * @return alt
+     */
     public int getAlt() {
         return alt;
     }

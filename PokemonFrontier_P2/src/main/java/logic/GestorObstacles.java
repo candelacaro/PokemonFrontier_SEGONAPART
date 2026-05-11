@@ -9,6 +9,7 @@ import java.util.Random;
  */
 public class GestorObstacles {
 
+	//Declaració i inicialització de finals
     private static final int TOTAL_OBSTACLES = 12;
     private static final int AMPLADA_PANTALLA = 400; // Amplada total de la pantalla
     private static final int ALTURA_PANTALLA = 600; // Altura total de la pantalla
@@ -22,12 +23,18 @@ public class GestorObstacles {
     private final boolean[] visible; // Per saber si l'obstacle encara hi és o l'hem trencat
     private final Random aleatori = new Random(); // Un dau per posar els obstacles en llocs aleatoris
 
+    /**
+     * Constructor per defecte
+     */
     public GestorObstacles() {
+    		//Emmagatzemem una instància de Rectangle el TOTAL_OBSTACLES
         this.llistaObstacles = new Rectangle[TOTAL_OBSTACLES]; // Preparem lloc per a 12 obstacles
         this.visible = new boolean[TOTAL_OBSTACLES]; // Preparem 12 interruptors
     }
 
-    // Crea 12 obstacles en llocs aleatoris de la zona mitjana de la pantalla
+    /**
+     * Mètode que crea 12 obstacles en llocs aleatoris de la zona mitjana de la pantalla
+     */
     public void generarObstacles() {
         for (int i = 0; i < TOTAL_OBSTACLES; i++) { // Fem un bucle de 1 a 12
             final int x = aleatori.nextInt(AMPLADA_PANTALLA - MIDA_OBSTACLE); // Tria una X a l'atzar
@@ -37,6 +44,11 @@ public class GestorObstacles {
         }
     }
 
+    /**
+     * Mètode que comprova si ha col·lisionar
+     * @param pilota, la pilota
+     * @return true o false en funció del que passi
+     */
     public boolean comprovarXoc(final Rectangle pilota) {
         for (int i = 0; i < TOTAL_OBSTACLES; i++) { // Mirem tots els obstacles
             if (visible[i]) { // Si l'obstacle encara no l'hem trencat
@@ -54,17 +66,26 @@ public class GestorObstacles {
         return false;
     }
 
-    // Retorna la llista d'obstacles
+    /**
+     * Mètode getter que retorna la llista d'obstacles
+     * @return llistaObstacles
+     */
     public Rectangle[] getLlistaObstacles() {
         return llistaObstacles;
     }
 
-    // Retorna la visibilitat dels obstacles
+    /**
+     * Mètode getter que retorna la visibilitat dels obstacles
+     * @return visible
+     */
     public boolean[] getVisible() {
         return visible;
     }
 
-    // Retorna el nombre total d'obstacles
+    /**
+     * Mètode getter que retorna el nombre total d'obstacles
+     * @return TOTAL_OBSTACLES
+     */
     public int getTotalObstacles() {
         return TOTAL_OBSTACLES;
     }

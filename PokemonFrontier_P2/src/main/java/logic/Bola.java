@@ -35,7 +35,7 @@ public class Bola {
     }
 
     /**
-     * Mètod que mou la pilota cap als costats i amunt i avall
+     * Mètode que mou la pilota cap als costats i amunt i avall
      */
     public void moure() {
         x += velX;

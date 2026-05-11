@@ -35,6 +35,7 @@ import logic.ConfigManager;
  * Classe VentanaJoc: Interfície gràfica i motor del joc. Implementa moviment
  * fluid, pujada de nivell progressiva, gestió de base de dades i sistema de
  * pausa/guardat.
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class VentanaJoc extends JFrame {
 
@@ -43,21 +44,23 @@ public class VentanaJoc extends JFrame {
 	// Declaració i inicialització de final String del nom de FITXER_PARTIDA
 	private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
-	//Declaració i inicialització de finals per els arguments de cada pilota
-	//Pilota 1
+	// Declaració i inicialització de finals per els arguments de cada pilota
+	// Pilota 1
 	private final int COORDENADA_X_PILOTA1 = 50;
 	private final int COORDENADA_Y_PILOTA1 = 50;
 	private final double VELOCITAT_PILOTA1 = 3;
-	//Pilota 2
+	// Pilota 2
 	private final int COORDENADA_X_PILOTA2 = 100;
 	private final int COORDENADA_Y_PILOTA2 = 50;
-	private final double VELOCITAT_PILOTA2 = 3.5; 
-	
+	private final double VELOCITAT_PILOTA2 = 3.5;
+
 	// Instància d'objectes del joc
 	// Instància de pilota1
-	private final Bola pilota1 = new Bola(COORDENADA_X_PILOTA1, COORDENADA_Y_PILOTA1, VELOCITAT_PILOTA1, VELOCITAT_PILOTA1, true);
+	private final Bola pilota1 = new Bola(COORDENADA_X_PILOTA1, COORDENADA_Y_PILOTA1, VELOCITAT_PILOTA1,
+			VELOCITAT_PILOTA1, true);
 	// Instància de pilota2
-	private final Bola pilota2 = new Bola(COORDENADA_X_PILOTA2, COORDENADA_Y_PILOTA2, VELOCITAT_PILOTA2, VELOCITAT_PILOTA2, false);
+	private final Bola pilota2 = new Bola(COORDENADA_X_PILOTA2, COORDENADA_Y_PILOTA2, VELOCITAT_PILOTA2,
+			VELOCITAT_PILOTA2, false);
 	// Instància de la raqueta superior
 	private final Raqueta raquetaSuperior = new Raqueta(100, 40, 100, 20);
 	// Instància de la raqueta inferior
@@ -114,18 +117,23 @@ public class VentanaJoc extends JFrame {
 	private static final String OPCIO_SORTIR_CATALA = "Prem 'Esc' per sortir al menú";
 	private static final String OPCIO_SORTIR_CASTELLA = "Pulsa 'Esc' para salir al menú";
 
-	//Declaració i inicialització de finals per les posicions per les possibles opcions del joc
+	// Declaració i inicialització de finals per les posicions per les possibles
+	// opcions del joc
 	private static final int POSICIO_HORIZONTAL_PAUSA = 130;
 	private static final int POSICIO_VERTICAL_PAUSA = 300;
 	private static final int POSICIO_HORIZONTAL_OPCIONS = 125;
 	private static final int POSICIO_VERTICAL_CONTINUAR = 340;
 	private static final int POSICIO_VERTICAL_GUARDAR = 360;
 	private static final int POSICIO_VERTICAL_SORTIR = 380;
-	
-	//Declaració i inicialització de finals per les mides de la finestra
+
+	// Declaració i inicialització de finals per les mides de la finestra
 	private static final int AMPLADA_FINESTRA = 500;
 	private static final int ALÇADA_FINESTRA = 600;
 
+	// Declaració i inicialització de finals per les mides dels obstacles
+	private final int AMPLADA_OBSTACLE = 40;
+	private final int ALÇADA_OBSTACLE = 40;
+	
 	// Declaració i inicialització de finals pels colors de la tabla de puntuació
 	private static final String COLOR_VERMELL = "RED", COLOR_VERD = "GREEN", COLOR_BLAU = "BLUE", COLOR_NEGRE = "BLACK",
 			COLOR_GROC = "YELLOW";
@@ -138,7 +146,7 @@ public class VentanaJoc extends JFrame {
 	private static final int POSICIO_VERTICAL_SEGON_JUGADOR = 70;
 	private static final int POSICIO_VERTICAL_PUNTUACIO = 90;
 
-	// Declaració i inicialització de finals de la pujada de dificultat
+	// Declaració i inicialització de finals de la pujada de dificultat (dues boles)
 	private static final int SUPERACIO_NIVELL_VUIT = 8;
 
 	// Declaració i inicialització de final pels limits de colisions de la pilota
@@ -224,30 +232,39 @@ public class VentanaJoc extends JFrame {
 		this.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// Declaració i inicialització de variable de llegeix quina tecla s'està prenent
 				int codi = e.getKeyCode();
 
-				// Sistema de Pausa
-				if (codi == KeyEvent.VK_Q || codi == KeyEvent.VK_P) {
+				// Sistema de Pausa, si es pren a la tecla Q es pausa el joc
+				if (codi == KeyEvent.VK_Q) {
 					setEstaPausat(!getEstaPausat());
 				}
 				// Accions disponibles quan el joc està pausat
 				if (getEstaPausat()) {
-					// Guardar partida
-					if (codi == KeyEvent.VK_S)
+					// Guardar partida, si e spren la tecla S
+					if (codi == KeyEvent.VK_S) {
+						// Crida del mètode
 						preguntarDesarPartida();
-					// Tornar al menú
-					if (codi == KeyEvent.VK_ESCAPE)
+					}
+					// Tornar al menú, si prenem la tecla ESC
+					if (codi == KeyEvent.VK_ESCAPE) {
+						// Crida del mètode
 						sortirAlMenuSenseGuardar();
+					}
 				} else {
 					// Marquem tecles com premudes per al moviment fluid
-					if (codi == KeyEvent.VK_A)
+					if (codi == KeyEvent.VK_A) {
 						teclaA = true;
-					if (codi == KeyEvent.VK_D)
+					}
+					if (codi == KeyEvent.VK_D) {
 						teclaD = true;
-					if (codi == KeyEvent.VK_LEFT)
+					}
+					if (codi == KeyEvent.VK_LEFT) {
 						teclaEsquerra = true;
-					if (codi == KeyEvent.VK_RIGHT)
+					}
+					if (codi == KeyEvent.VK_RIGHT) {
 						teclaDreta = true;
+					}
 				}
 			}
 
@@ -466,7 +483,7 @@ public class VentanaJoc extends JFrame {
 	}
 
 	/**
-	 * Mètode que pregunta si es vol guardar la partida.
+	 * Mètode que pregunta si es vol desar la partida.
 	 */
 	private void preguntarDesarPartida() {
 		String msg = idioma.equals(LLENGUATGE_CATALA) ? GUARDAR_PARTIDA_CATALA : GUARDAR_PARTIDA_CASTELLA;
@@ -476,7 +493,7 @@ public class VentanaJoc extends JFrame {
 	}
 
 	/**
-	 * Mètode que Guarda la partida al fitxer.
+	 * Mètode que desa la partida al fitxer.
 	 */
 	private void guardarPartida() {
 		try {
@@ -542,6 +559,8 @@ public class VentanaJoc extends JFrame {
 		new MenuInici().setVisible(true);
 		// Tanquem finestra actual
 		this.dispose();
+		//Tanquem la finestra del joc
+		this.setFocusable(false);
 	}
 
 	/**
@@ -555,8 +574,8 @@ public class VentanaJoc extends JFrame {
 
 		// Declaració i inicialitzió de StringBuilder per mostrar text
 		StringBuilder sb = new StringBuilder("TOP 10\n\n");
-		
-		//Declaració i inicialització de variable int
+
+		// Declaració i inicialització de variable int
 		int i = 1;
 
 		// Construïm llista de ranking
@@ -576,41 +595,58 @@ public class VentanaJoc extends JFrame {
 
 		area.setBackground(fondo);
 		area.setForeground(Color.WHITE);
-		// Scroll
+		
+		/*Crea un panell de desplaçament (JScrollPane) que contindrà el component 'area' (probablement un JTextArea).
+		 Això permet que, si el text és molt llarg, apareguin barres de desplaçament.*/
 		JScrollPane scroll = new JScrollPane(area);
 
+		// Crea un nou panell (JPanel) per organitzar els elements de la interfície.
 		JPanel panel = new JPanel();
+		
+		/*Defineix un disseny de tipus BorderLayout per al panell. 
+		Aquest disseny permet dividir el panell en 5 zones: Nord, Sud, Est, Oest i Centre.*/
 		panel.setLayout(new BorderLayout());
 
+		//Estableix el color de fons del panell principal utilitzant la variable 'fondo'.
 		panel.setBackground(fondo);
 
+		/*El Viewport és la "finestra" a través de la qual veiem el component scrollable (l'àrea de text).
+		 El fem opac perquè es pugui visualitzar el color que li assignarem. */
 		scroll.getViewport().setOpaque(true);
+		//Establim el color de fons de la vista del scroll (el viewport) perquè coincideixi amb la resta.
 		scroll.getViewport().setBackground(fondo);
+		//Fem que el propi JScrollPane sigui opac.
 		scroll.setOpaque(true);
+		
+		//Finalment, assignem el color de fons al JScrollPane per mantenir l'estètica uniforme de la interfície.
 		scroll.setBackground(fondo);
 
 		// Botó canvi color
 		JButton btnColor = new JButton(config.t(CANVIAR_COLOR_CATALA, CANVIAR_COLOR_CASTELLA));
 
+		//Botó per canviar de color la mostra del ranking
 		btnColor.addActionListener(e -> {
-
+			//Emmagatzemem les opcions en una llista
 			String[] opciones = { COLOR_NEGRE, COLOR_VERMELL, COLOR_BLAU, COLOR_VERD };
-
+			//Declarem i inicialitzem una variable per la mostra del panell de canvi de color
 			String seleccion = (String) JOptionPane.showInputDialog(panel, config.t(SELECCIO_COLOR, SELECCIO_COLOR),
 					config.t(CONFIGURACIO_CATALA, CONFIGURACIO_CASTELLA), JOptionPane.QUESTION_MESSAGE, null, opciones,
 					config.getColorPuntuacio());
-
+			//Si la selecció no es nul·la s'executa
 			if (seleccion != null) {
 
-				// guardar en archivo
+				// Desem l'archiu
 				config.setColorPuntuacio(seleccion);
 
-				// recargar config
+				//Recarreguem configuració
 				config = new ConfigManager();
-
+				
+				//Declarem i iniccialitzem un nou color segons la selecció
 				Color nuevo = convertirColor(seleccion);
-
+				
+				//Mostrem el panel amb el nou fons de color
 				panel.setBackground(nuevo);
+				//Establim el fons principal amb la variable nuevo
 				scroll.setBackground(nuevo);
 				scroll.getViewport().setBackground(nuevo);
 
@@ -620,13 +656,14 @@ public class VentanaJoc extends JFrame {
 				panel.repaint();
 			}
 		});
-
+		//Afegim el botó al panell
 		panel.add(btnColor, BorderLayout.NORTH);
+		//El centrem
 		panel.add(scroll, BorderLayout.CENTER);
 
 		// Finestra ranking
 		JFrame frame = new JFrame(DEU_MILLORS_PUNTUACIONS);
-		frame.setSize(400, 450);
+		frame.setSize(AMPLADA_FINESTRA, ALÇADA_FINESTRA);
 		frame.setLocationRelativeTo(null);
 		frame.setContentPane(panel);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -645,9 +682,11 @@ public class VentanaJoc extends JFrame {
 	 * Mètode que converteix el nom del color guardat a un objecte Color.
 	 */
 	private Color convertirColor(String c) {
-		if (c == null)
+		//Si la seleccció es nul·la per defecte en gris
+		if (c == null) {
 			return Color.DARK_GRAY;
-
+		}
+		//Switch per actuar segons quina opció es escollida
 		switch (c.toUpperCase()) {
 		case COLOR_VERMELL:
 			return Color.RED;
@@ -669,19 +708,25 @@ public class VentanaJoc extends JFrame {
 	private void dibuixarFons(Graphics2D g2d) {
 		ImageIcon f = recursos.getFonsActual(getNivell());
 		if (f != null)
-			g2d.drawImage(f.getImage(), 0, 0, 500, 600, null);
+			g2d.drawImage(f.getImage(), 0, 0, AMPLADA_FINESTRA, ALÇADA_FINESTRA, null);
 	}
 
 	/**
 	 * Mètode que dibuixa els obstacles visibles.
 	 */
 	private void dibuixarObstacles(Graphics2D g2d) {
+		//En una array de tipus rectangle, afegim la llistaObstacles
 		Rectangle[] obs = gestorObstacles.getLlistaObstacles();
+		//En una array de tipus boolean la igualem a visible de la classe gestorObstacles
 		boolean[] vis = gestorObstacles.getVisible();
+		//Recorrem el total d'obstacles
 		for (int i = 0; i < gestorObstacles.getTotalObstacles(); i++) {
+			
 			if (vis[i]) {
+				//Declarem l'obstacle actual segons el nivell
 				ImageIcon img = recursos.getObstacleActual(getNivell());
-				g2d.drawImage(img.getImage(), obs[i].x, obs[i].y, 40, 40, null);
+				//Dibuixem l'obstacle
+				g2d.drawImage(img.getImage(), obs[i].x, obs[i].y, AMPLADA_OBSTACLE, ALÇADA_OBSTACLE, null);
 			}
 		}
 	}
@@ -690,7 +735,9 @@ public class VentanaJoc extends JFrame {
 	 * Mètode que dibuixa les pilotes actives.
 	 */
 	private void dibuixarPilotes(Graphics2D g2d) {
+		//Accedim a la imatge de la pilota de la classe recursos
 		ImageIcon img = recursos.getImgPilota();
+		//Si la pilota és activa la dibuixem
 		if (pilota1.isActiva())
 			g2d.drawImage(img.getImage(), (int) pilota1.getX(), (int) pilota1.getY(), 30, 30, null);
 		if (pilota2.isActiva())
@@ -701,7 +748,9 @@ public class VentanaJoc extends JFrame {
 	 * Mètode que dibuixa les raquetes dels jugadors.
 	 */
 	private void dibuixarRaquetes(Graphics2D g2d) {
+		//Accedim a la imatge de la raqueta de la classe recursos
 		ImageIcon img = recursos.getImgRaqueta();
+		//Dibuixem la raqueta
 		g2d.drawImage(img.getImage(), raquetaSuperior.getX(), raquetaSuperior.getY() - 10, raquetaSuperior.getAmple(),
 				40, null);
 		g2d.drawImage(img.getImage(), raquetaInferior.getX(), 520, raquetaInferior.getAmple(), 40, null);

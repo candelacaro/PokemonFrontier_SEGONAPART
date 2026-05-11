@@ -7,29 +7,41 @@ import java.io.Serializable;
  * Cada cop que algu comenca a jugar, creem un "objecte" d'aquests.
  * Implementem Serializable per poder desar la partida en un fitxer.
  *
- * @author dam1
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
  */
 public class Partida implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Declarem les dades que volem recordar de la partida
+    // Declarem els atributs de les dades que volem recordar de la partida
     private String nomJugador1; // El nom que ha posat el jugador 1 al menu
     private String nomJugador2; // El nom que ha posat el jugador 2 al menu
     private String nickName1; // El nom que ha posat el jugador 1 al menu
     private String nickName2; // El nom que ha posat el jugador 2 al menu
- // Si ha triat Catala o Castella
+    // Atribut per si ha triat Catala o Castella
     private String idioma;
 
+    /**
+     * Mètode getter que accedeix a idioma 
+     * @return l'idioma triat
+     */
     public String getIdioma() {
         return idioma;
     }
 
+    /**
+     * Mètode setter que modifica idioma 
+     * @param idioma, idioma escollit
+     */
     public void setIdioma(String idioma) {
         this.idioma = idioma;
     }
+    
+    //Declaració i inicialització d'atributs privats
     private int nivell;     // El nivell on ha comencat o on es troba
     private long punts; // Els punts que portava la partida quan es va guardar
+    
+    //Declaració i inicialització de final
     private static final int PUNTUACIO_DE_INICI = 0; // Puntuacio de inici dels jugadors
 
     /**
@@ -91,22 +103,34 @@ public class Partida implements Serializable {
 	}
 
 
-	// Retorna el nivell actual
+		/**
+		 * Mètode getter que retorna el nivell actual
+		 * @return nivell
+		 */
 		public int getNivell() {
 			return nivell;
 		}
 
-		// Modifica el nivell actual
+		/**
+		 * Mètode setter que modifica el nivell actual
+		 * @param nivell, el nivell que es vol jugar
+		 */
 		public void setNivell(int nivell) {
 			this.nivell = nivell;
 		}
 
-		// Retorna els punts de la partida
+		/**
+		 * Mètode getter que retorna els punts de la partida
+		 * @return punts
+		 */
 		public long getPunts() {
 			return punts;
 		}
 
-		// Modifica els punts de la partida
+		/**
+		 * Mètode setter que modifica els punts de la partida
+		 * @param punts, els punts que te
+		 */
 		public void setPunts(long punts) {
 			this.punts = punts;
 		}}
