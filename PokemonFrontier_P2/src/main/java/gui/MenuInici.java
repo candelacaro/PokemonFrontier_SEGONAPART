@@ -445,11 +445,9 @@ public class MenuInici extends JFrame {
      * Mètode per un nou botó per continuar la partida 
      */
     private void accioBotoContinuar() {
-    	
-    		//Declaració i inicialització de File fent referència a FITXER_PARTIDA
+
         File fitxer = new File(FITXER_PARTIDA);
 
-        //Estructura condicional on avalua si hi ha alguna partida guardada
         if (!fitxer.exists()) {
             JOptionPane.showMessageDialog(this,
                 config.t("No hi ha cap partida guardada",
@@ -457,7 +455,6 @@ public class MenuInici extends JFrame {
             return;
         }
 
-        //Declaració i inicialització de variable int, on es mostra la pregunta, i la opció si o no
         int resposta = JOptionPane.showConfirmDialog(
                 this,
                 config.t("Vols continuar la partida guardada?",
@@ -466,14 +463,9 @@ public class MenuInici extends JFrame {
                 JOptionPane.YES_NO_OPTION
         );
 
-        //Estructura condicional on avalua si respon que si
         if (resposta == JOptionPane.YES_OPTION) {
-        		//Crida del mètode continuarPartidaGuardada()
             continuarPartidaGuardada();
         }
-        JOptionPane.showMessageDialog(this,
-                config.t("No s'ha pogut continuar la partida guardada",
-                         "No se ha podido continuar la partida guardada"));
     }
 
     /**
