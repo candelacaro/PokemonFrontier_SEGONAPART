@@ -12,7 +12,9 @@ public class HibernateUtil {
     // Variable que guardarà la SessionFactory d'Hibernate
     private final SessionFactory sessionFactory;
 
-    // Constructor de la classe
+    /**
+     * Constructor de la classe
+     */
     public HibernateUtil() {
 
         try {
@@ -32,12 +34,17 @@ public class HibernateUtil {
         }
     }
 
-    // Mètode getter per obtenir la SessionFactory
+    /**
+     * Mètode getter per obtenir la SessionFactory
+     * @return sessionFactory
+     */
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
-    // Mètode per tancar la SessionFactory i alliberar recursos
+    /**
+     * Mètode per tancar la SessionFactory i alliberar recursos
+     */
     public void shutdown() {
 
         // Comprovem que la SessionFactory existeixi

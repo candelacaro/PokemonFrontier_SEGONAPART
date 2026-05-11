@@ -39,92 +39,109 @@ import logic.ConfigManager;
 public class VentanaJoc extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	
-	//Declaració i inicialització de final String del nom de FITXER_PARTIDA
+
+	// Declaració i inicialització de final String del nom de FITXER_PARTIDA
 	private static final String FITXER_PARTIDA = "partida_guardada.dat";
 
-	//Instància d'objectes del joc
-	//Instància de pilota1
-	private final Bola pilota1 = new Bola(50, 50, 3, 3, true);
-	//Instància de pilota2
-	private final Bola pilota2 = new Bola(100, 50, 3.5, 3.5, false);
-	//Instància de la raqueta superior
+	//Declaració i inicialització de finals per els arguments de cada pilota
+	//Pilota 1
+	private final int COORDENADA_X_PILOTA1 = 50;
+	private final int COORDENADA_Y_PILOTA1 = 50;
+	private final double VELOCITAT_PILOTA1 = 3;
+	//Pilota 2
+	private final int COORDENADA_X_PILOTA2 = 100;
+	private final int COORDENADA_Y_PILOTA2 = 50;
+	private final double VELOCITAT_PILOTA2 = 3.5; 
+	
+	// Instància d'objectes del joc
+	// Instància de pilota1
+	private final Bola pilota1 = new Bola(COORDENADA_X_PILOTA1, COORDENADA_Y_PILOTA1, VELOCITAT_PILOTA1, VELOCITAT_PILOTA1, true);
+	// Instància de pilota2
+	private final Bola pilota2 = new Bola(COORDENADA_X_PILOTA2, COORDENADA_Y_PILOTA2, VELOCITAT_PILOTA2, VELOCITAT_PILOTA2, false);
+	// Instància de la raqueta superior
 	private final Raqueta raquetaSuperior = new Raqueta(100, 40, 100, 20);
-	//Instància de la raqueta inferior
+	// Instància de la raqueta inferior
 	private final Raqueta raquetaInferior = new Raqueta(100, 530, 100, 20);
 
-	//Declaració i inicialització de booleans per el control de moviment fluid
-	private boolean teclaA = false; 
-	private boolean teclaD = false; 
-	private boolean teclaEsquerra = false; 
+	// Declaració i inicialització de booleans per el control de moviment fluid
+	private boolean teclaA = false;
+	private boolean teclaD = false;
+	private boolean teclaEsquerra = false;
 	private boolean teclaDreta = false;
-	
-	//Declaració i inicialització de finals que controlen la velocitat
+
+	// Declaració i inicialització de finals que controlen la velocitat
 	private final double VELOCITAT_RAQUETA = 7.0; // Píxels per frame
 	private final double VELOCITAT_MAXIMA_PILOTA = 12.0;
 
-	//Declaració i incialització de variables que controlen l'estat de la partida
+	// Declaració i incialització de variables que controlen l'estat de la partida
 	private long punts = 0;
 	private final long tempsInici;
-	private int nivell = 1;//Es comença pel nivell 1
+	private int nivell = 1;// Es comença pel nivell 1
 	private int comptadorTempsNivell = 0;
 	private final Partida partida;
 	private boolean estaPausat = false;
 	private final String idioma;
 	private boolean pilota2JaActivada = false;
-	
-	//Declaració i inicialització de finals per la mostra de text a la finestra
-    private static final String LLENGUATGE_CATALA = "Catala";
-    private static final String PUNTUACIO_CATALA = "Punts: ";
-    private static final String PUNTUACIO_CASTELLA = "Puntos: ";
-    private static final String PIRMER_JUGADOR = "J1: ";
-    private static final String SEGON_JUGADOR = "J2: ";
-    private static final String NIVELL_ACTUAL = "Nivell: ";
-    private static final String DEU_MILLORS_PUNTUACIONS = "TOP 10";
-    private static final String MISSATGE_DE_PAUSA = "PAUSE";
-    
-    // Declaració i inicialització de finals dels texts traduits
-    private static final String GUARDAR_PARTIDA_CATALA = "Vols desar la partida?";
-    private static final String GUARDAR_PARTIDA_CASTELLA = "¿Quieres guardar la partida?";
-    private static final String BOTO_PER_DESAR_PARTIDA = "Save";
-    private static final String PARTIDA_GUARDADA_CATALA = "Guardat correctament";
-    private static final String PARTIDA_GUARDADA_CASTELLA = "Guardado correctamente";
-    private static final String ERROR_PARTIDA_CATALA = "Error en desar";
-    private static final String ERROR_PARTIDA_CASTELLA = "Error al guardar";
-    private static final String ERROR_PUNTUACIO = "Error en desar la puntuació: ";
-    private static final String CANVIAR_COLOR_CATALA = "Canviar color";
-    private static final String CANVIAR_COLOR_CASTELLA = "Cambiar color";
-    private static final String SELECCIO_COLOR = "Selecciona color: ";
-    private static final String CONFIGURACIO_CATALA = "Configuració";
-    private static final String CONFIGURACIO_CASTELLA = "Configuración";
-    private static final String OPCIO_CONTINUAR_CATALA = "Prem 'Q' per continuar";
-    private static final String OPCIO_CONTINUAR_CASTELLA = "Pulsa 'Q' para continuar";
-    private static final String OPCIO_GUARDAR_CATALA = "Prem 'S' per desar la partida";
-    private static final String OPCIO_GUARDAR_CASTELLA = "Pulsa 'S' para guardar la partida";
-    private static final String OPCIO_SORTIR_CATALA = "Prem 'Esc' per sortir al menú";
-    private static final String OPCIO_SORTIR_CASTELLA = "Pulsa 'Esc' para salir al menú";
-    
-    //Declaració i inicialització de finals per les posicions per les possible sopcions del joc
-    private static final int POSICIO_HORIZONTAL_PAUSA = 130;
-    private static final int POSICIO_VERTICAL_PAUSA = 300;
-    private static final int POSICIO_HORIZONTAL_OPCIONS = 125;
-    private static final int POSICIO_VERTICAL_CONTINUAR = 340;
-    private static final int POSICIO_VERTICAL_GUARDAR = 360;
-    private static final int POSICIO_VERTICAL_SORTIR = 380;
-    
-    // Declaració i inicialització de finals pels colors de la tabla de puntuació
-    private static final String COLOR_VERMELL = "RED", COLOR_VERD = "GREEN", COLOR_BLAU = "BLUE", COLOR_NEGRE = "BLACK", COLOR_GROC = "YELLOW";
 
-    // Declaració i inicialització de finals per les posicions de la mostra de text en pantalla
-    private static final int POSICIO_HORIZONTAL_DADES_PARTIDA = 20;
-    private static final int POSICIO_VERTICAL_DADES_PARTIDA = 50;
-    private static final int POSICIO_HORIZONTAL_NIVELL = 410;
-    private static final int POSICIO_VERTICAL_SEGON_JUGADOR = 70;
-    private static final int POSICIO_VERTICAL_PUNTUACIO = 90;
-    
+	// Declaració i inicialització de finals per la mostra de text a la finestra
+	private static final String LLENGUATGE_CATALA = "Catala";
+	private static final String PUNTUACIO_CATALA = "Punts: ";
+	private static final String PUNTUACIO_CASTELLA = "Puntos: ";
+	private static final String PIRMER_JUGADOR = "J1: ";
+	private static final String SEGON_JUGADOR = "J2: ";
+	private static final String NIVELL_ACTUAL = "Nivell: ";
+	private static final String DEU_MILLORS_PUNTUACIONS = "TOP 10";
+	private static final String MISSATGE_DE_PAUSA = "PAUSE";
+
+	// Declaració i inicialització de finals dels texts traduits
+	private static final String GUARDAR_PARTIDA_CATALA = "Vols desar la partida?";
+	private static final String GUARDAR_PARTIDA_CASTELLA = "¿Quieres guardar la partida?";
+	private static final String BOTO_PER_DESAR_PARTIDA = "Save";
+	private static final String PARTIDA_GUARDADA_CATALA = "Guardat correctament";
+	private static final String PARTIDA_GUARDADA_CASTELLA = "Guardado correctamente";
+	private static final String ERROR_PARTIDA_CATALA = "Error en desar";
+	private static final String ERROR_PARTIDA_CASTELLA = "Error al guardar";
+	private static final String ERROR_PUNTUACIO = "Error en desar la puntuació: ";
+	private static final String CANVIAR_COLOR_CATALA = "Canviar color";
+	private static final String CANVIAR_COLOR_CASTELLA = "Cambiar color";
+	private static final String SELECCIO_COLOR = "Selecciona color: ";
+	private static final String CONFIGURACIO_CATALA = "Configuració";
+	private static final String CONFIGURACIO_CASTELLA = "Configuración";
+	private static final String OPCIO_CONTINUAR_CATALA = "Prem 'Q' per continuar";
+	private static final String OPCIO_CONTINUAR_CASTELLA = "Pulsa 'Q' para continuar";
+	private static final String OPCIO_GUARDAR_CATALA = "Prem 'S' per desar la partida";
+	private static final String OPCIO_GUARDAR_CASTELLA = "Pulsa 'S' para guardar la partida";
+	private static final String OPCIO_SORTIR_CATALA = "Prem 'Esc' per sortir al menú";
+	private static final String OPCIO_SORTIR_CASTELLA = "Pulsa 'Esc' para salir al menú";
+
+	//Declaració i inicialització de finals per les posicions per les possibles opcions del joc
+	
+	private static final int POSICIO_HORIZONTAL_PAUSA = 130;
+	private static final int POSICIO_VERTICAL_PAUSA = 300;
+	private static final int POSICIO_HORIZONTAL_OPCIONS = 125;
+	private static final int POSICIO_VERTICAL_CONTINUAR = 340;
+	private static final int POSICIO_VERTICAL_GUARDAR = 360;
+	private static final int POSICIO_VERTICAL_SORTIR = 380;
+	
+	//Declaració i inicialització de finals per les mides de la finestra
+	private static final int AMPLADA_FINESTRA = 500;
+	private static final int ALÇADA_FINESTRA = 600;
+
+	// Declaració i inicialització de finals pels colors de la tabla de puntuació
+	private static final String COLOR_VERMELL = "RED", COLOR_VERD = "GREEN", COLOR_BLAU = "BLUE", COLOR_NEGRE = "BLACK",
+			COLOR_GROC = "YELLOW";
+
+	// Declaració i inicialització de finals per les posicions de la mostra de text
+	// en pantalla
+	private static final int POSICIO_HORIZONTAL_DADES_PARTIDA = 20;
+	private static final int POSICIO_VERTICAL_DADES_PARTIDA = 50;
+	private static final int POSICIO_HORIZONTAL_NIVELL = 410;
+	private static final int POSICIO_VERTICAL_SEGON_JUGADOR = 70;
+	private static final int POSICIO_VERTICAL_PUNTUACIO = 90;
+
 	// Declaració i inicialització de finals de la pujada de dificultat
 	private static final int SUPERACIO_NIVELL_VUIT = 8;
-	
+
 	// Declaració i inicialització de final pels limits de colisions de la pilota
 	private static final int COLISIO_PARET_ESQUERRA = 0;
 	private static final int COLISIO_PARET_DRETA = 460;
@@ -132,7 +149,7 @@ public class VentanaJoc extends JFrame {
 	private static final int COLISIO_PILOTA_RAQUETA = 30;
 	private static final int LIMIT_PILOTA_RAQUETA_SUPERIOR = 600;
 	private static final int LIMIT_PILOTA_RAQUETA_INFERIOR = 0;
-	
+
 	// Declaració i inicialització de finals del increment de nivell i velocitats
 	private static final int INCREMENT_TEMPS_MILISEGONS = 10;
 	private static final int SALT_DE_NIVELL = 20000;
@@ -148,21 +165,23 @@ public class VentanaJoc extends JFrame {
 	private static final int FONT_MONOSPACED = 16;
 	private static final int FONT_IMPACT = 50;
 	private static final int FONT_ARIAL_PAUSA = 15;
-	
-	//Declaració i inicialització de variables per els recursos i lògica externa
+
+	// Declaració i inicialització de variables per els recursos i lògica externa
 	private Timer temporitzadorJoc;
-	//Instància d'objecte de la classe RecursosJoc
+	// Instància d'objecte de la classe RecursosJoc
 	private final RecursosJoc recursos = new RecursosJoc();
-	//Instància d'objecte de la classe ConfigManager
+	// Instància d'objecte de la classe ConfigManager
 	private ConfigManager config = new ConfigManager();
-	//Instància d'objecte de la classe GestorObstacles
+	// Instància d'objecte de la classe GestorObstacles
 	private final GestorObstacles gestorObstacles = new GestorObstacles();
-	//Declaració d'objecte de la classe PuntuacionsRepository
+	// Declaració d'objecte de la classe PuntuacionsRepository
 	private final PuntuacionsRepository puntuacionsRepository;
 
 	/**
-	 * Constructor que inicialitza la finestra del joc, guarda la partida i connecta amb l'Hibernate
-	 * @param partida, instància de la classe partida
+	 * Constructor que inicialitza la finestra del joc, guarda la partida i connecta
+	 * amb l'Hibernate
+	 * 
+	 * @param partida,   instància de la classe partida
 	 * @param hibernate, connexió amb bbdd
 	 */
 	public VentanaJoc(Partida partida, HibernateUtil hibernate) {
@@ -183,21 +202,23 @@ public class VentanaJoc extends JFrame {
 		}
 
 		// Configuració de la finestra
-		this.setSize(500, 600);
+		this.setSize(AMPLADA_FINESTRA, ALÇADA_FINESTRA);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setFocusable(true);
-		
+
 		// Generem obstacles inicials
 		generarObstacles();
-		
+
 		// Reproduïm música i so inicial
 		reproduirMusica();
 		reproduirIniciPartida();
 
-		// Calculem el temps d'inici restant els punts per mantenir la cronologia si es
-		// carrega partida
+		/*
+		 * Calculem el temps d'inici restant els punts per mantenir la cronologia si es
+		 * carrega partida
+		 */
 		this.tempsInici = System.currentTimeMillis() - this.punts;
 
 		// Gestió d'entrades de teclat (Events)
@@ -252,11 +273,9 @@ public class VentanaJoc extends JFrame {
 	 */
 	public void moureTot() {
 		// Si està pausat no es mou res
-
 		if (getEstaPausat()) {
 			return;
 		}
-			
 
 		// Moviment de les raquetes (Fluïdesa basada en estat de tecles)
 		actualitzarPosicioRaquetes();
@@ -276,20 +295,19 @@ public class VentanaJoc extends JFrame {
 		// Comprovem si la partida ha acabat
 		comprovarFinalPartida();
 	}
-	
+
 	/**
 	 * Mètode que actualitza la posició de les raquetes.
-	 */	
+	 */
 	private void actualitzarPosicioRaquetes() {
 		// Raqueta Superior (A - D)
 		if (teclaA && raquetaSuperior.getX() > COMPROVADOR_DE_COLISIO_DE_RAQUETA) {
 			raquetaSuperior.setX((int) (raquetaSuperior.getX() - VELOCITAT_RAQUETA));
 		}
-			
+
 		if (teclaD && raquetaSuperior.getX() < getWidth() - raquetaSuperior.getAmple()) {
 			raquetaSuperior.setX((int) (raquetaSuperior.getX() + VELOCITAT_RAQUETA));
 		}
-			
 
 		// Raqueta Inferior (Fletxes)
 		if (teclaEsquerra && raquetaInferior.getX() > COMPROVADOR_DE_COLISIO_DE_RAQUETA)
@@ -299,25 +317,25 @@ public class VentanaJoc extends JFrame {
 	}
 
 	/**
-	 * Mètode que tanca la partida actual i torna al menú principal sense desar cap dada ni
-	 * puntuació.
+	 * Mètode que tanca la partida actual i torna al menú principal sense desar cap
+	 * dada ni puntuació.
 	 */
 	private void sortirAlMenuSenseGuardar() {
-		//Aturem el motor del joc si no es nul
+		// Aturem el motor del joc si no es nul
 		if (temporitzadorJoc != null) {
 			temporitzadorJoc.stop();
 		}
 
-		//Aturem la música de fons
+		// Aturem la música de fons
 		recursos.pararMusica();
 
-		//Tornem a obrir el menú principal
+		// Tornem a obrir el menú principal
 		new MenuInici().setVisible(true);
 
-		//Tanquem i alliberem la memòria d'aquesta finestra de joc
+		// Tanquem i alliberem la memòria d'aquesta finestra de joc
 		this.dispose();
 	}
-	
+
 	/**
 	 * Mètode que mou una pilota i comprova col·lisions.
 	 */
@@ -360,6 +378,7 @@ public class VentanaJoc extends JFrame {
 		if (pilota.getY() > LIMIT_PILOTA_RAQUETA_SUPERIOR || pilota.getY() < LIMIT_PILOTA_RAQUETA_INFERIOR)
 			pilota.setActiva(false);
 	}
+
 	/**
 	 * Mètode que augmenta la dificultat del joc.
 	 */
@@ -367,7 +386,7 @@ public class VentanaJoc extends JFrame {
 		// Incrementem el comptador
 		setComptadorTempsNivell(getComptadorTempsNivell() + INCREMENT_TEMPS_MILISEGONS);
 		// Cada 20 segons puja el nivell
-		
+
 		if (getComptadorTempsNivell() >= SALT_DE_NIVELL && getNivell() < LIMIT_DE_NIVELL) {
 			setNivell(getNivell() + INCREMENT_DE_NIVELL);
 			// Augmentem velocitat
@@ -381,7 +400,7 @@ public class VentanaJoc extends JFrame {
 	}
 
 	/**
-	 * Mètode que dibuixa tots els elements del joc 
+	 * Mètode que dibuixa tots els elements del joc
 	 */
 	@Override
 	public void paint(final Graphics g) {
@@ -391,10 +410,10 @@ public class VentanaJoc extends JFrame {
 			return;
 		// Convertim a Graphics2D per poder millorar el renderitzat
 		Graphics2D g2d = (Graphics2D) imatgeOffscreen.getGraphics();
-		
+
 		// Activem suavitzat d'imatge
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		// Dibuix de tots els elements
 		dibuixarFons(g2d);
 		dibuixarObstacles(g2d);
@@ -402,46 +421,47 @@ public class VentanaJoc extends JFrame {
 		dibuixarRaquetes(g2d);
 		dibuixarTextos(g2d);
 		dibuixarPausa(g2d);
-		
+
 		// Pintem la imatge final a pantalla
 		g.drawImage(imatgeOffscreen, 0, 0, null);
 	}
-	
+
 	/**
 	 * Mètode que mostra informació del joc (punts, jugadors, nivell).
 	 */
 	private void dibuixarTextos(final Graphics2D g2d) {
-		
+
 		// Font del text
 		g2d.setFont(new Font(TIPOGRAFIA_FONT_ARIAL, Font.BOLD, FONT_ARIAL));
-		
+
 		// Text segons idioma
 		String labelPunts = idioma.equals(LLENGUATGE_CATALA) ? PUNTUACIO_CATALA : PUNTUACIO_CASTELLA;
-	
+
 		// Informació dels jugadors
-		g2d.drawString(PIRMER_JUGADOR + partida.getNickName1(), POSICIO_HORIZONTAL_DADES_PARTIDA, POSICIO_VERTICAL_DADES_PARTIDA);
-		g2d.drawString(SEGON_JUGADOR + partida.getNickName2(), POSICIO_HORIZONTAL_DADES_PARTIDA, POSICIO_VERTICAL_SEGON_JUGADOR);
-		
+		g2d.drawString(PIRMER_JUGADOR + partida.getNickName1(), POSICIO_HORIZONTAL_DADES_PARTIDA,
+				POSICIO_VERTICAL_DADES_PARTIDA);
+		g2d.drawString(SEGON_JUGADOR + partida.getNickName2(), POSICIO_HORIZONTAL_DADES_PARTIDA,
+				POSICIO_VERTICAL_SEGON_JUGADOR);
+
 		// Punts i nivell
 		g2d.drawString(labelPunts + getPunts(), POSICIO_HORIZONTAL_DADES_PARTIDA, POSICIO_VERTICAL_PUNTUACIO);
 		g2d.drawString(NIVELL_ACTUAL + getNivell(), POSICIO_HORIZONTAL_NIVELL, POSICIO_VERTICAL_DADES_PARTIDA);
 	}
 
-	
 	/**
 	 * Mètode que inicia el timer principal del joc.
 	 */
 	public void iniciarJoc() {
-		
+
 		// Donem focus a la finestra
 		requestFocusInWindow();
-		
+
 		// Timer que actualitza joc cada 10ms
 		temporitzadorJoc = new Timer(INCREMENT_TEMPS_MILISEGONS, e -> {
 			moureTot();
 			repaint();
 		});
-		
+
 		// Engeguem el joc
 		temporitzadorJoc.start();
 	}
@@ -455,46 +475,44 @@ public class VentanaJoc extends JFrame {
 		if (res == JOptionPane.YES_OPTION)
 			guardarPartida();
 	}
-	
+
 	/**
 	 * Mètode que Guarda la partida al fitxer.
 	 */
 	private void guardarPartida() {
 		try {
-			
+
 			// Actualitzem dades de la partida
 			partida.setNivell(getNivell());
 			partida.setPunts(getPunts());
-			
+
 			// Escriure objecte en fitxer
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FITXER_PARTIDA));
 			oos.writeObject(partida);
 			oos.close();
-			
+
 			// Tornem al menú
 			pararITornarAlMenu();
-			
+
 			// Missatge d'èxit
-			JOptionPane.showMessageDialog(this,
-			        config.t(PARTIDA_GUARDADA_CATALA, PARTIDA_GUARDADA_CASTELLA));
-		} catch (Exception e) {	// Missatge d'error
-			JOptionPane.showMessageDialog(this,
-			        config.t(ERROR_PARTIDA_CATALA, ERROR_PARTIDA_CASTELLA));
+			JOptionPane.showMessageDialog(this, config.t(PARTIDA_GUARDADA_CATALA, PARTIDA_GUARDADA_CASTELLA));
+		} catch (Exception e) { // Missatge d'error
+			JOptionPane.showMessageDialog(this, config.t(ERROR_PARTIDA_CATALA, ERROR_PARTIDA_CASTELLA));
 		}
 	}
-	
+
 	/**
 	 * Mètode que comprova si la partida ha acabat.
 	 */
 	private void comprovarFinalPartida() {
 		// Si les dues pilotes han mort
-	    if (!pilota1.isActiva() && !pilota2.isActiva()) {
+		if (!pilota1.isActiva() && !pilota2.isActiva()) {
 			// Aturem el joc
-	        if (temporitzadorJoc != null)
-	            temporitzadorJoc.stop();
+			if (temporitzadorJoc != null)
+				temporitzadorJoc.stop();
 			// Aturem música
-	        recursos.pararMusica();
-	        sonarMort();
+			recursos.pararMusica();
+			sonarMort();
 
 			try {
 				// Creem nova puntuació
@@ -506,158 +524,155 @@ public class VentanaJoc extends JFrame {
 				System.err.println(ERROR_PUNTUACIO + e.getMessage());
 			}
 			// Mostrem ranking al final
-	        SwingUtilities.invokeLater(() -> {
-	            mostrarTop10();
-	        });
-	    }
+			SwingUtilities.invokeLater(() -> {
+				mostrarTop10();
+			});
+		}
 	}
-	
+
 	/**
 	 * Mètode que torna al menú principal.
 	 */
 	private void pararITornarAlMenu() {
 		// Aturem el timer
-	    if (temporitzadorJoc != null)
-	        temporitzadorJoc.stop();
+		if (temporitzadorJoc != null)
+			temporitzadorJoc.stop();
 		// Aturem música
-	    recursos.pararMusica();
+		recursos.pararMusica();
 		// Obrim menú
-	    new MenuInici().setVisible(true);
+		new MenuInici().setVisible(true);
 		// Tanquem finestra actual
-	    this.dispose();
+		this.dispose();
 	}
-	
+
 	/**
 	 * Mètode que mostra el Top 10 de puntuacions.
 	 */
 	private void mostrarTop10() {
 		// Recàrrega de configuració
-		    config = new ConfigManager();
-			// Obtenim dades de BD
-		    List<Puntuaciones> top = puntuacionsRepository.obtenirTop10();
+		config = new ConfigManager();
+		// Obtenim dades de BD
+		List<Puntuaciones> top = puntuacionsRepository.obtenirTop10();
 
-		    StringBuilder sb = new StringBuilder("TOP 10\n\n");
+		// Declaració i inicialitzió de StringBuilder per mostrar text
+		StringBuilder sb = new StringBuilder("TOP 10\n\n");
+		
+		//Declaració i inicialització de variable int
+		int i = 1;
 
-	    int i = 1;
-	    
 		// Construïm llista de ranking
-	    for (Puntuaciones p : top) {
+		for (Puntuaciones p : top) {
 			// Es canvia p.getNomJugador() per p.getUsuarios().getNombre() per seguretat
 			String nomMostrat = (p.getUsuarios() != null) ? p.getUsuarios().getNombre() : "Anònim";
-	        sb.append(String.format("%d. %-15s %d\n", i++, nomMostrat, p.getPuntuacion()));
-	    }
+			sb.append(String.format("%d. %-15s %d\n", i++, nomMostrat, p.getPuntuacion()));
+		}
 		// Zona de text
-	    JTextArea area = new JTextArea(sb.toString());
-	    area.setFont(new Font(TIPOGRAFIA_FONT_MONOSPACED, Font.BOLD, FONT_MONOSPACED));
-	    area.setEditable(false);
-	    area.setOpaque(true);
+		JTextArea area = new JTextArea(sb.toString());
+		area.setFont(new Font(TIPOGRAFIA_FONT_MONOSPACED, Font.BOLD, FONT_MONOSPACED));
+		area.setEditable(false);
+		area.setOpaque(true);
 
 		// Color segons configuració
-	    Color fondo = convertirColor(config.getColorPuntuacio());
+		Color fondo = convertirColor(config.getColorPuntuacio());
 
-	    area.setBackground(fondo);
-	    area.setForeground(Color.WHITE);
+		area.setBackground(fondo);
+		area.setForeground(Color.WHITE);
 		// Scroll
-	    JScrollPane scroll = new JScrollPane(area);
+		JScrollPane scroll = new JScrollPane(area);
 
-	    JPanel panel = new JPanel();
-	    panel.setLayout(new BorderLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
 
-	    panel.setBackground(fondo);
+		panel.setBackground(fondo);
 
-	    scroll.getViewport().setOpaque(true);
-	    scroll.getViewport().setBackground(fondo);
-	    scroll.setOpaque(true);
-	    scroll.setBackground(fondo);
+		scroll.getViewport().setOpaque(true);
+		scroll.getViewport().setBackground(fondo);
+		scroll.setOpaque(true);
+		scroll.setBackground(fondo);
 
 		// Botó canvi color
-	    JButton btnColor = new JButton(
-	            config.t(CANVIAR_COLOR_CATALA, CANVIAR_COLOR_CASTELLA));
-	    
-	    btnColor.addActionListener(e -> {
+		JButton btnColor = new JButton(config.t(CANVIAR_COLOR_CATALA, CANVIAR_COLOR_CASTELLA));
 
-	    	String[] opciones = {
-	    		    COLOR_NEGRE,
-	    		    COLOR_VERMELL,
-	    		    COLOR_BLAU,
-	    		    COLOR_VERD
-	    		};
+		btnColor.addActionListener(e -> {
 
-	    	String seleccion = (String) JOptionPane.showInputDialog(
-	    	        panel,
-	    	        config.t(SELECCIO_COLOR, SELECCIO_COLOR),
-	    	        config.t(CONFIGURACIO_CATALA, CONFIGURACIO_CASTELLA),
-	    	        JOptionPane.QUESTION_MESSAGE,
-	    	        null,
-	    	        opciones,
-	    	        config.getColorPuntuacio()
-	    	);
+			String[] opciones = { COLOR_NEGRE, COLOR_VERMELL, COLOR_BLAU, COLOR_VERD };
 
-	        if (seleccion != null) {
+			String seleccion = (String) JOptionPane.showInputDialog(panel, config.t(SELECCIO_COLOR, SELECCIO_COLOR),
+					config.t(CONFIGURACIO_CATALA, CONFIGURACIO_CASTELLA), JOptionPane.QUESTION_MESSAGE, null, opciones,
+					config.getColorPuntuacio());
 
-	            // guardar en archivo
-	            config.setColorPuntuacio(seleccion);
+			if (seleccion != null) {
 
-	            // recargar config
-	            config = new ConfigManager();
+				// guardar en archivo
+				config.setColorPuntuacio(seleccion);
 
-	            Color nuevo = convertirColor(seleccion);
+				// recargar config
+				config = new ConfigManager();
 
-	            panel.setBackground(nuevo);
-	            scroll.setBackground(nuevo);
-	            scroll.getViewport().setBackground(nuevo);
+				Color nuevo = convertirColor(seleccion);
 
-	            area.setBackground(nuevo);
-	            area.setForeground(Color.WHITE);
+				panel.setBackground(nuevo);
+				scroll.setBackground(nuevo);
+				scroll.getViewport().setBackground(nuevo);
 
-	            panel.repaint();
-	        }
-	    });
+				area.setBackground(nuevo);
+				area.setForeground(Color.WHITE);
 
-	    panel.add(btnColor, BorderLayout.NORTH);
-	    panel.add(scroll, BorderLayout.CENTER);
+				panel.repaint();
+			}
+		});
+
+		panel.add(btnColor, BorderLayout.NORTH);
+		panel.add(scroll, BorderLayout.CENTER);
 
 		// Finestra ranking
-	    JFrame frame = new JFrame(DEU_MILLORS_PUNTUACIONS);
-	    frame.setSize(400, 450);
-	    frame.setLocationRelativeTo(null);
-	    frame.setContentPane(panel);
-	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JFrame frame = new JFrame(DEU_MILLORS_PUNTUACIONS);
+		frame.setSize(400, 450);
+		frame.setLocationRelativeTo(null);
+		frame.setContentPane(panel);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// Quan es tanca torna al menú
-	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
-	        @Override
-	        public void windowClosed(java.awt.event.WindowEvent e) {
-	            new MenuInici().setVisible(true);
-	        }
-	    });
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosed(java.awt.event.WindowEvent e) {
+				new MenuInici().setVisible(true);
+			}
+		});
 
-	    frame.setVisible(true);
+		frame.setVisible(true);
 	}
 
 	/**
-	 * Mètod que converteix el nom del color guardat a un objecte Color.
+	 * Mètode que converteix el nom del color guardat a un objecte Color.
 	 */
 	private Color convertirColor(String c) {
-		if (c == null) return Color.DARK_GRAY;
+		if (c == null)
+			return Color.DARK_GRAY;
 
 		switch (c.toUpperCase()) {
-			case COLOR_VERMELL: return Color.RED;
-			case COLOR_BLAU: return Color.BLUE;
-			case COLOR_VERD: return Color.GREEN;
-			case COLOR_GROC: return Color.YELLOW;
-			default: return Color.BLACK;
+		case COLOR_VERMELL:
+			return Color.RED;
+		case COLOR_BLAU:
+			return Color.BLUE;
+		case COLOR_VERD:
+			return Color.GREEN;
+		case COLOR_GROC:
+			return Color.YELLOW;
+		default:
+			return Color.BLACK;
 		}
 	}
+
 	/**
 	 * Mètode que dibuixa el fons del joc.
 	 */
-	
+
 	private void dibuixarFons(Graphics2D g2d) {
 		ImageIcon f = recursos.getFonsActual(getNivell());
 		if (f != null)
 			g2d.drawImage(f.getImage(), 0, 0, 500, 600, null);
 	}
-	
+
 	/**
 	 * Mètode que dibuixa els obstacles visibles.
 	 */
@@ -671,7 +686,7 @@ public class VentanaJoc extends JFrame {
 			}
 		}
 	}
-	
+
 	/**
 	 * Mètode que dibuixa les pilotes actives.
 	 */
@@ -682,7 +697,7 @@ public class VentanaJoc extends JFrame {
 		if (pilota2.isActiva())
 			g2d.drawImage(img.getImage(), (int) pilota2.getX(), (int) pilota2.getY(), 30, 30, null);
 	}
-	
+
 	/**
 	 * Mètode que dibuixa les raquetes dels jugadors.
 	 */
@@ -692,7 +707,7 @@ public class VentanaJoc extends JFrame {
 				40, null);
 		g2d.drawImage(img.getImage(), raquetaInferior.getX(), 520, raquetaInferior.getAmple(), 40, null);
 	}
-	
+
 	/**
 	 * Mètode que mostra pantalla de pausa.
 	 */

@@ -3,6 +3,10 @@ package logic.db.classes;
 
 import java.sql.Timestamp;
 
+/**
+ * Classe Puntuaciones implementada des de hibernate
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
+ */
 public class Puntuaciones implements java.io.Serializable {
 
 	// Identificador únic de la puntuació

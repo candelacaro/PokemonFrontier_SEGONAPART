@@ -7,6 +7,10 @@ import org.hibernate.query.Query;
 import logic.db.classes.Puntuaciones;
 import logic.db.classes.Usuarios; // Entitat que guarda el nom
 
+/**
+ * Classe PuntuacionsRepository que connecta amb Hibernate, desa les puntuacions i realitza el ranking
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
+ */
 public class PuntuacionsRepository {
 
     // Objecte utilitzat per gestionar la connexió amb Hibernate
@@ -21,8 +25,10 @@ public class PuntuacionsRepository {
     }
 
     /**
-     * Guarda una puntuació a la base de dades.
+     * Mètode que guarda una puntuació a la base de dades.
      * Si l'usuari no existeix, es crea automàticament.
+     * @param p, instància que es desa de la classe Puntuaciones
+     * @param nickName, nickName del jugador
      */
     public void guardarPuntuacio(Puntuaciones p, String nickName) {
 
@@ -87,7 +93,7 @@ public class PuntuacionsRepository {
     }
 
     /**
-     * Retorna el Top 10 de puntuacions.
+     * Mètode que retorna el Top 10 de puntuacions 
      */
     public List<Puntuaciones> obtenirTop10() {
 

@@ -4,6 +4,10 @@ package logic.db.classes;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Classe Usuarios que implementa serializable i també és implementada per hibernate
+ * @author Daner Coria, André Medinas, Candela Cabello, Izan Perez i Adrià Chenovart
+ */
 public class Usuarios implements java.io.Serializable {
 
 	// Identificador únic de l'usuari
