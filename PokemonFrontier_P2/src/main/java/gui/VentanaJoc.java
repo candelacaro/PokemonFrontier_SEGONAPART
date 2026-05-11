@@ -115,7 +115,6 @@ public class VentanaJoc extends JFrame {
 	private static final String OPCIO_SORTIR_CASTELLA = "Pulsa 'Esc' para salir al menú";
 
 	//Declaració i inicialització de finals per les posicions per les possibles opcions del joc
-	
 	private static final int POSICIO_HORIZONTAL_PAUSA = 130;
 	private static final int POSICIO_VERTICAL_PAUSA = 300;
 	private static final int POSICIO_HORIZONTAL_OPCIONS = 125;
